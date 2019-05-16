@@ -11,17 +11,16 @@ from flask import \
 from data_ingestion import utils
 from data_ingestion.forms import UploadForm
 from data_ingestion.models import DataImport
-import time
 
 mod_home = Blueprint('home', __name__, url_prefix='/')
 
 @mod_home.route('/', methods = ['GET', 'POST'])
 def home():
+    utils.delete_temp_folder()
     form = UploadForm(CombinedMultiDict((request.files, request.form)))
     form.selected_mapping.choices = utils.get_mappings_collection()
 
     if request.method == 'POST':
-        time.sleep(1)
         if form.validate_on_submit():
             data_file_name = secure_filename(form.data_file.data.filename)
             utils.save_temp_file(request.files['data_file'])

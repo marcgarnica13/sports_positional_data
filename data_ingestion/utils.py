@@ -1,4 +1,6 @@
 import os
+import re
+import shutil
 
 from werkzeug.utils import secure_filename
 
@@ -47,3 +49,14 @@ def save_temp_file(f):
 def load_temp_file(f):
     check_folder('temp')
     return open(os.path.join('temp', f), "r")
+
+def delete_temp_folder():
+    if check_folder('temp', False):
+        shutil.rmtree('temp')
+
+def urlify(s):
+    # Remove all non-word characters (everything except numbers and letters)
+    s = re.sub(r"[^\w\s]", '', s)
+    # Replace all runs of whitespace with a single dash
+    s = re.sub(r"\s+", '_', s)
+    return s
