@@ -1,0 +1,82 @@
+{% extends "base.html"%}
+{% block content %}
+<!-- Complete card -->
+<form action="/" method="post" enctype="multipart/form-data" role="form">
+  {{ form.csrf_token() }}
+  <!-- Identification -->
+
+  <div class="row card">
+      <div class="row">
+          <div class="col-md-6">
+                  <div class="card-body">
+                      <h2 class="card-title">Data file</h2>
+                      <div class="form-group custom-file">
+                          <label for="data_file" class="custom-file-label">Upload file </label>
+                          <input type="file" class='custom-file-input form-control' id="data_file" name="data_file">
+                          <ul class="alert-danger">
+                          {% for error in form.data_file.errors %}
+                            {{ error }}
+                          {% endfor %}
+                          </ul>
+                      </div>
+
+                  </div>
+          </div>
+
+          <div class="col-md-6">
+                  <div class="card-body">
+                      <h2 class="card-title">Data mappings </h2>
+                      <div class="row">
+                        <div class="form-group col-md-8">
+                            <select class="custom-select form-control" id="selected_mapping" name="selected_mapping" value=" {{ form.selected_mapping.data }}">
+                              <option>Select mapping</option>
+                                {% for m in form.selected_mapping.choices %}
+                              <option value="{{ m[0] }}" {% if m[0] == form.selected_mapping.data %}selected="selected"{% endif %}>{{ m[1] }}</option>
+                              {% endfor %}
+                            </select>
+                            <ul class="alert-danger">
+                              {% for error in form.selected_mapping.errors %}
+                                {{ error }}
+                              {% endfor %}
+                          </ul>
+                        </div>
+                        <div class="col-md-4">
+                          <button type="button" class="btn btn-primary btn-block">Download</button>
+                        </div>
+
+                      </div>
+                        <div>
+                            <button type="button" class="btn btn-warning btn-block">Import new mapping</button>
+                        </div>
+                  </div>
+          </div>
+      </div>
+      <div class="row card-body">
+          <div class="card-body">
+              <h2 class="card-title">Additional information: </h2>
+              <div class="row">
+                  <div class="form-group col-md-6">
+                      <input id="full_name" name="full_name" type="text" class="form-control" value="{{ form.full_name.data }}" placeholder="Full name">
+                      <ul class="alert-danger">
+                      {% for error in form.full_name.errors %}
+                        {{ error }}
+                      {% endfor %}
+                      </ul>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <input id="message" name="message" type="text" class="form-control" value="{{ form.message.data }}" placeholder="Message">
+                      <ul class="alert-danger">
+                      {% for error in form.message.errors %}
+                        {{ error }}
+                      {% endfor %}
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  <div class="row" style="margin-top: 1em;">
+      <button id=upload_data type="submit" class="btn btn-default btn-lg btn-block">Upload data</button>
+  </div>
+</form>
+{% endblock %}

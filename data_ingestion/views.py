@@ -1,0 +1,50 @@
+from werkzeug.datastructures import CombinedMultiDict
+from werkzeug.utils import secure_filename
+
+from flask import \
+    render_template,\
+    request,\
+    url_for,\
+    redirect,\
+    Blueprint
+
+from data_ingestion import utils
+from data_ingestion.forms import UploadForm
+from data_ingestion.models import DataImport
+import time
+
+mod_home = Blueprint('home', __name__, url_prefix='/')
+
+@mod_home.route('/', methods = ['GET', 'POST'])
+def home():
+    form = UploadForm(CombinedMultiDict((request.files, request.form)))
+    form.selected_mapping.choices = utils.get_mappings_collection()
+
+    if request.method == 'POST':
+        time.sleep(1)
+        if form.validate_on_submit():
+            data_file_name = secure_filename(form.data_file.data.filename)
+            utils.save_temp_file(request.files['data_file'])
+            return redirect(
+                url_for("home.validate",
+                        selected_mapping=form.selected_mapping.data,
+                        full_name=form.full_name.data,
+                        message=form.message.data,
+                        data_file_name=data_file_name))
+    return render_template("home.html", form=form)
+
+@mod_home.route('/data_validation', methods = ['GET','POST'])
+def validate():
+    print('data validation')
+    print(request)
+    print(request.args['data_file_name'])
+    newImport = DataImport(request.args['selected_mapping'],
+                           request.args['full_name'],
+                           request.args['message'],
+                           request.args['data_file_name'])
+    return render_template("validation.html", messages=newImport.validate())
+
+@mod_home.route('/data_uploader', methods = ['POST'])
+def data_upload():
+    print('data uploader')
+    return render_template("404.html")
