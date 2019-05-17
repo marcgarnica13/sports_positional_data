@@ -43,7 +43,7 @@ mapping = {
             'schema_identifier': 'ts in ms',
             'section_id': 'dshs#mapping_1',
             'timestamp': 'ts in ms',
-            'coord_x': 'x inn m',
+            'coord_x': 'x in m',
             'coord_y': 'y in m',
             'coord_z': 'z in m',
             'additional_fields' : [

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2 class="card-title" style="margin-left: 10px">Something went wrong</h2>
+    <div class="card-body">
+        <p>{{ error }}</p>
+        <p>Return to the <a href="/">home page</a> to start a new import.</p>
+    </div>
+</div>
+{% endblock %}

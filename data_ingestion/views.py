@@ -34,14 +34,15 @@ def home():
 
 @mod_home.route('/data_validation', methods = ['GET','POST'])
 def validate():
-    print('data validation')
-    print(request)
-    print(request.args['data_file_name'])
     newImport = DataImport(request.args['selected_mapping'],
                            request.args['full_name'],
                            request.args['message'],
                            request.args['data_file_name'])
-    return render_template("validation.html", messages=newImport.validate())
+    correct, messages = newImport.validate()
+    if not correct:
+        return redirect(url_for("home.home"))
+    else:
+        return render_template("validation.html", messages=messages)
 
 @mod_home.route('/data_uploader', methods = ['POST'])
 def data_upload():

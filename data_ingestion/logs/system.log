@@ -2390,3 +2390,330 @@
 2019-05-16 15:11:28,736 werkzeug     INFO     127.0.0.1 - - [16/May/2019 15:11:28] "GET / HTTP/1.1" 200 -
 2019-05-16 15:11:41,890 werkzeug     INFO     127.0.0.1 - - [16/May/2019 15:11:41] "POST / HTTP/1.1" 302 -
 2019-05-16 15:11:41,966 werkzeug     INFO     127.0.0.1 - - [16/May/2019 15:11:41] "GET /data_validation?selected_mapping=1&full_name=M&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 13:01:09,927 root         INFO     ############### CHECKPOINT
+2019-05-17 13:01:09,927 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:01:10,234 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:01:10,235 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:01:10,488 root         INFO     ############### CHECKPOINT
+2019-05-17 13:01:10,488 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:01:10,711 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:01:10,712 werkzeug     INFO      * Debugger PIN: 496-062-847
+2019-05-17 13:01:17,691 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:01:17] "GET / HTTP/1.1" 200 -
+2019-05-17 13:01:17,699 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:01:17] "GET /static/css/custom.css HTTP/1.1" 304 -
+2019-05-17 13:01:18,066 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:01:18] "GET / HTTP/1.1" 200 -
+2019-05-17 13:01:18,115 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:01:18] "GET /static/images/logo.png HTTP/1.1" 200 -
+2019-05-17 13:01:18,595 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:01:18] "GET /favicon.ico HTTP/1.1" 404 -
+2019-05-17 13:01:28,845 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:01:28] "POST / HTTP/1.1" 302 -
+2019-05-17 13:01:28,950 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:01:28] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 13:01:49,723 root         INFO     ############### CHECKPOINT
+2019-05-17 13:01:49,723 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:01:49,927 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:01:49,928 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:01:50,190 root         INFO     ############### CHECKPOINT
+2019-05-17 13:01:50,190 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:01:50,409 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:01:50,409 werkzeug     INFO      * Debugger PIN: 991-077-012
+2019-05-17 13:04:03,574 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/models.py', reloading
+2019-05-17 13:04:03,685 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:04:04,041 root         INFO     ############### CHECKPOINT
+2019-05-17 13:04:04,041 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:04:14,343 root         INFO     ############### CHECKPOINT
+2019-05-17 13:04:14,343 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:04:14,541 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:04:14,541 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:04:14,803 root         INFO     ############### CHECKPOINT
+2019-05-17 13:04:14,803 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:04:15,027 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:04:15,028 werkzeug     INFO      * Debugger PIN: 746-096-912
+2019-05-17 13:04:20,142 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:04:20] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 13:04:25,245 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/tests/mappings.py', reloading
+2019-05-17 13:04:25,354 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:04:25,693 root         INFO     ############### CHECKPOINT
+2019-05-17 13:04:25,693 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:04:25,914 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:04:25,914 werkzeug     INFO      * Debugger PIN: 619-436-478
+2019-05-17 13:04:28,096 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:04:28] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 500 -
+2019-05-17 13:04:28,109 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:04:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2019-05-17 13:04:28,109 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:04:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+2019-05-17 13:04:28,111 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:04:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2019-05-17 13:04:28,416 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:04:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:04:28,439 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:04:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:05:34,538 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:05:34] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 500 -
+2019-05-17 13:05:34,558 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:05:34] "GET /data_validation?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2019-05-17 13:05:34,568 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:05:34] "GET /data_validation?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+2019-05-17 13:05:34,572 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:05:34] "GET /data_validation?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2019-05-17 13:05:34,985 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:05:34] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:05:35,010 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:05:35] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:05:35,101 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/models.py', reloading
+2019-05-17 13:05:35,230 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:05:35,494 root         INFO     ############### CHECKPOINT
+2019-05-17 13:05:35,494 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:05:35,715 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:05:35,715 werkzeug     INFO      * Debugger PIN: 144-877-440
+2019-05-17 13:05:50,865 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:05:50] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 13:06:10,298 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/tests/mappings.py', reloading
+2019-05-17 13:06:10,390 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:06:10,640 root         INFO     ############### CHECKPOINT
+2019-05-17 13:06:10,641 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:06:10,889 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:06:10,889 werkzeug     INFO      * Debugger PIN: 310-262-049
+2019-05-17 13:06:11,181 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:06:11] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 13:06:25,997 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:06:25] "GET / HTTP/1.1" 200 -
+2019-05-17 13:06:31,926 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:06:31] "POST / HTTP/1.1" 200 -
+2019-05-17 13:08:49,567 root         INFO     ############### CHECKPOINT
+2019-05-17 13:08:49,567 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:08:49,785 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:08:49,786 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:08:50,040 root         INFO     ############### CHECKPOINT
+2019-05-17 13:08:50,040 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:08:50,300 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:08:50,300 werkzeug     INFO      * Debugger PIN: 206-211-439
+2019-05-17 13:08:54,577 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:08:54] "GET / HTTP/1.1" 200 -
+2019-05-17 13:09:01,772 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:09:01] "POST / HTTP/1.1" 302 -
+2019-05-17 13:09:01,849 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:09:01] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 13:09:04,892 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:09:04] "POST /data_uploader HTTP/1.1" 200 -
+2019-05-17 13:11:21,879 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:11:21] "GET / HTTP/1.1" 200 -
+2019-05-17 13:11:28,977 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:11:28] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 500 -
+2019-05-17 13:11:28,988 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:11:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2019-05-17 13:11:28,989 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:11:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+2019-05-17 13:11:28,990 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:11:28] "GET /data_validation?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2019-05-17 13:11:29,161 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:11:29] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:11:29,184 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:11:29] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:15:59,660 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:15:59] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 500 -
+2019-05-17 13:15:59,675 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:15:59] "GET /data_validation?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2019-05-17 13:15:59,677 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:15:59] "GET /data_validation?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+2019-05-17 13:15:59,678 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:15:59] "GET /data_validation?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2019-05-17 13:16:00,210 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:00] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:16:00,234 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:00] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:16:00,282 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/views.py', reloading
+2019-05-17 13:16:00,392 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:16:00,734 root         INFO     ############### CHECKPOINT
+2019-05-17 13:16:00,734 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:16:00,961 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:16:00,961 werkzeug     INFO      * Debugger PIN: 693-254-027
+2019-05-17 13:16:03,254 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:03] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 302 -
+2019-05-17 13:16:03,319 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:03] "GET / HTTP/1.1" 200 -
+2019-05-17 13:16:11,693 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:11] "GET /data_validation HTTP/1.1" 500 -
+2019-05-17 13:16:11,711 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:11] "GET /data_validation?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2019-05-17 13:16:11,712 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:11] "GET /data_validation?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2019-05-17 13:16:11,713 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:11] "GET /data_validation?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+2019-05-17 13:16:11,860 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:11] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:16:11,877 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:16:11] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:17:15,358 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/views.py', reloading
+2019-05-17 13:17:15,497 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:17:15,875 root         INFO     ############### CHECKPOINT
+2019-05-17 13:17:15,875 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:17:16,156 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:17:16,157 werkzeug     INFO      * Debugger PIN: 815-503-797
+2019-05-17 13:36:43,768 root         INFO     ############### CHECKPOINT
+2019-05-17 13:36:43,768 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:36:43,979 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:36:43,979 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:36:44,228 root         INFO     ############### CHECKPOINT
+2019-05-17 13:36:44,228 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:36:44,440 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:36:44,440 werkzeug     INFO      * Debugger PIN: 508-348-080
+2019-05-17 13:36:50,586 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:36:50] "GET / HTTP/1.1" 200 -
+2019-05-17 13:36:50,712 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:36:50] "GET / HTTP/1.1" 200 -
+2019-05-17 13:36:54,039 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:36:54] "GET /data_validation HTTP/1.1" 500 -
+2019-05-17 13:36:54,055 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:36:54] "GET /data_validation?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2019-05-17 13:36:54,055 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:36:54] "GET /data_validation?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+2019-05-17 13:36:54,056 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:36:54] "GET /data_validation?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2019-05-17 13:36:54,234 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:36:54] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:37:11,648 root         INFO     ############### CHECKPOINT
+2019-05-17 13:37:11,648 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:37:11,850 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:37:13,991 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:13] "GET / HTTP/1.1" 200 -
+2019-05-17 13:37:14,074 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:14] "GET / HTTP/1.1" 200 -
+2019-05-17 13:37:20,211 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:20] "GET / HTTP/1.1" 200 -
+2019-05-17 13:37:31,572 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:31] "GET /data_validation HTTP/1.1" 400 -
+2019-05-17 13:37:48,328 root         INFO     ############### CHECKPOINT
+2019-05-17 13:37:48,328 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:37:48,538 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:37:48,538 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:37:48,779 root         INFO     ############### CHECKPOINT
+2019-05-17 13:37:48,779 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:37:48,994 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:37:48,994 werkzeug     INFO      * Debugger PIN: 609-089-354
+2019-05-17 13:37:51,104 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:51] "GET /data_validation HTTP/1.1" 500 -
+2019-05-17 13:37:51,118 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:51] "GET /data_validation?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2019-05-17 13:37:51,120 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:51] "GET /data_validation?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+2019-05-17 13:37:51,121 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:51] "GET /data_validation?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2019-05-17 13:37:51,475 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:37:51] "GET /data_validation?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2019-05-17 13:39:32,939 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/__init__.py', reloading
+2019-05-17 13:39:33,020 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:39:33,264 root         INFO     ############### CHECKPOINT
+2019-05-17 13:39:33,264 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:39:33,481 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:39:33,481 werkzeug     INFO      * Debugger PIN: 327-116-736
+2019-05-17 13:40:13,184 werkzeug     INFO      * Detected change in '/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/__init__.py', reloading
+2019-05-17 13:40:13,300 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:44:08,829 root         INFO     ############### CHECKPOINT
+2019-05-17 13:44:08,829 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:44:09,038 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:44:09,038 werkzeug     INFO      * Restarting with stat
+2019-05-17 13:44:09,261 root         INFO     ############### CHECKPOINT
+2019-05-17 13:44:09,261 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:44:09,488 werkzeug     WARNING   * Debugger is active!
+2019-05-17 13:44:09,488 werkzeug     INFO      * Debugger PIN: 305-729-610
+2019-05-17 13:44:17,744 root         INFO     ############### CHECKPOINT
+2019-05-17 13:44:17,744 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:44:17,945 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:44:20,123 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:44:20] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:44:28,153 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:44:28] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:44:29,393 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:44:29] "GET /datss HTTP/1.1" 404 -
+2019-05-17 13:45:11,490 root         INFO     ############### CHECKPOINT
+2019-05-17 13:45:11,490 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:45:11,693 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:45:14,077 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:45:14] "GET /datss HTTP/1.1" 404 -
+2019-05-17 13:45:17,060 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:45:17] "GET /datss HTTP/1.1" 404 -
+2019-05-17 13:45:36,788 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:45:36] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:46:07,572 root         INFO     ############### CHECKPOINT
+2019-05-17 13:46:07,573 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:46:07,775 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:46:09,992 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:46:09] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:46:13,273 flask.app    ERROR    Exception on /data_validations [GET]
+Traceback (most recent call last):
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/app.py", line 1791, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/app.py", line 1774, in raise_routing_exception
+    raise request.routing_exception
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/ctx.py", line 336, in match_request
+    self.url_adapter.match(return_rule=True)
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/werkzeug/routing.py", line 1961, in match
+    raise NotFound()
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/app.py", line 1713, in handle_user_exception
+    return self.handle_http_exception(e)
+  File "/home/marc/anaconda3/envs/basketball/lib/python3.6/site-packages/flask/app.py", line 1644, in handle_http_exception
+    return handler(e)
+  File "/home/marc/Development/thesis/project/positional_data_repository/data_ingestion/__init__.py", line 23, in not_found
+    return render_template('404.html', error)
+TypeError: render_template() takes 1 positional argument but 2 were given
+2019-05-17 13:46:13,278 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:46:13] "GET /data_validations HTTP/1.1" 200 -
+2019-05-17 13:46:50,926 root         INFO     ############### CHECKPOINT
+2019-05-17 13:46:50,926 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:46:51,136 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:46:52,196 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:46:52] "GET /data_validations HTTP/1.1" 200 -
+2019-05-17 13:47:00,585 root         INFO     ############### CHECKPOINT
+2019-05-17 13:47:00,585 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:47:00,790 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:47:02,567 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:47:02] "GET /data_validations HTTP/1.1" 200 -
+2019-05-17 13:49:34,794 root         INFO     ############### CHECKPOINT
+2019-05-17 13:49:34,794 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:49:34,990 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:49:36,606 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:49:36] "GET /data_validations HTTP/1.1" 200 -
+2019-05-17 13:50:25,948 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:50:25] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:50:40,208 root         INFO     ############### CHECKPOINT
+2019-05-17 13:50:40,208 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:50:40,421 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:50:41,958 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:50:41] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:50:52,560 root         INFO     ############### CHECKPOINT
+2019-05-17 13:50:52,560 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:50:52,765 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:50:55,286 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:50:55] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:51:53,272 root         INFO     ############### CHECKPOINT
+2019-05-17 13:51:53,273 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:51:53,492 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:51:55,977 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:51:55] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:52:15,154 root         INFO     ############### CHECKPOINT
+2019-05-17 13:52:15,154 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:52:15,366 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:52:16,378 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:52:16] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:52:22,060 root         INFO     ############### CHECKPOINT
+2019-05-17 13:52:22,060 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:52:22,272 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:52:23,282 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:52:23] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:52:26,748 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:52:26] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:52:42,151 root         INFO     ############### CHECKPOINT
+2019-05-17 13:52:42,151 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:52:42,362 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:52:43,367 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:52:43] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:52:56,054 root         INFO     ############### CHECKPOINT
+2019-05-17 13:52:56,054 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:52:56,254 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:52:57,302 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:52:57] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:53:14,366 root         INFO     ############### CHECKPOINT
+2019-05-17 13:53:14,366 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:53:14,566 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:53:15,808 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:53:15] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:53:28,540 root         INFO     ############### CHECKPOINT
+2019-05-17 13:53:28,541 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 13:53:28,749 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 13:53:30,346 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:53:30] "GET /data_validation HTTP/1.1" 200 -
+2019-05-17 13:53:32,025 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:53:32] "GET / HTTP/1.1" 200 -
+2019-05-17 13:53:35,344 werkzeug     INFO     127.0.0.1 - - [17/May/2019 13:53:35] "GET / HTTP/1.1" 200 -
+2019-05-17 14:58:16,876 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:58:16] "GET / HTTP/1.1" 200 -
+2019-05-17 14:58:29,435 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:58:29] "POST / HTTP/1.1" 302 -
+2019-05-17 14:58:29,514 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:58:29] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 14:59:08,974 root         INFO     ############### CHECKPOINT
+2019-05-17 14:59:08,974 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 14:59:09,180 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 14:59:10,270 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:59:10] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 14:59:32,721 root         INFO     ############### CHECKPOINT
+2019-05-17 14:59:32,721 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 14:59:32,922 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 14:59:33,967 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:59:33] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 14:59:40,603 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:59:40] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 14:59:43,407 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:59:43] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 14:59:49,850 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:59:49] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 14:59:59,911 werkzeug     INFO     127.0.0.1 - - [17/May/2019 14:59:59] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:00:05,599 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:05] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:00:09,780 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:09] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:00:09,801 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:09] "GET /static/css/custom.css HTTP/1.1" 200 -
+2019-05-17 15:00:09,804 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:09] "GET /static/images/logo.png HTTP/1.1" 200 -
+2019-05-17 15:00:10,264 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:10] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:00:13,870 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:13] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:00:13,891 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:13] "GET /static/css/custom.css HTTP/1.1" 200 -
+2019-05-17 15:00:13,894 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:13] "GET /static/images/logo.png HTTP/1.1" 200 -
+2019-05-17 15:00:14,362 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:14] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:00:37,680 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:37] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:00:38,180 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:00:38] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:01:14,659 root         INFO     ############### CHECKPOINT
+2019-05-17 15:01:14,659 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 15:01:14,861 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 15:01:14,862 werkzeug     INFO      * Restarting with stat
+2019-05-17 15:01:15,121 root         INFO     ############### CHECKPOINT
+2019-05-17 15:01:15,121 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 15:01:15,360 werkzeug     WARNING   * Debugger is active!
+2019-05-17 15:01:15,360 werkzeug     INFO      * Debugger PIN: 475-718-826
+2019-05-17 15:01:16,371 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:01:16] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:01:16,806 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:01:16] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:01:23,196 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:01:23] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:01:23,617 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:01:23] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:02:02,473 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:02] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Kinexon+data+uploading&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:02:02,937 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:02] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:02:24,472 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:24] "GET / HTTP/1.1" 200 -
+2019-05-17 15:02:24,736 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:24] "GET / HTTP/1.1" 200 -
+2019-05-17 15:02:25,243 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:25] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:02:40,215 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:40] "GET / HTTP/1.1" 200 -
+2019-05-17 15:02:40,696 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:40] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:02:43,372 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:43] "GET  HTTP/1.1" 200 -
+2019-05-17 15:02:43,800 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:02:43] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:03:02,165 root         INFO     ############### CHECKPOINT
+2019-05-17 15:03:02,165 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 15:03:02,364 werkzeug     INFO      * Running on http://127.0.0.1:5001/ (Press CTRL+C to quit)
+2019-05-17 15:03:02,364 werkzeug     INFO      * Restarting with stat
+2019-05-17 15:03:02,628 root         INFO     ############### CHECKPOINT
+2019-05-17 15:03:02,628 root         INFO     Logger initialized by ./logging.ini file
+2019-05-17 15:03:02,838 werkzeug     WARNING   * Debugger is active!
+2019-05-17 15:03:02,839 werkzeug     INFO      * Debugger PIN: 256-263-906
+2019-05-17 15:03:04,485 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:04] "GET  HTTP/1.1" 200 -
+2019-05-17 15:03:04,950 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:04] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:03:07,224 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:07] "GET  HTTP/1.1" 200 -
+2019-05-17 15:03:07,654 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:07] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:03:11,400 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:11] "GET / HTTP/1.1" 200 -
+2019-05-17 15:03:11,839 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:11] "GET /favicon.ico HTTP/1.1" 200 -
+2019-05-17 15:03:27,224 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:27] "POST / HTTP/1.1" 302 -
+2019-05-17 15:03:27,337 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:27] "GET /data_validation?selected_mapping=0&full_name=Marc&message=Message&data_file_name=kinexon_sample.csv HTTP/1.1" 200 -
+2019-05-17 15:03:27,837 werkzeug     INFO     127.0.0.1 - - [17/May/2019 15:03:27] "GET /favicon.ico HTTP/1.1" 200 -
