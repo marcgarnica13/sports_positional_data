@@ -47,7 +47,7 @@ mapping = {
             'coord_y': 'y in m',
             'coord_z': 'z in m',
             'additional_fields' : [
-                'speed in m/s', 'direction of movement in deg', 'acceleration in m/s2', 'total distance in m', 'metabolic power in W/kg', 'acceleration load'
+                'speed inn m/s', 'direction of movement in deg', 'acceleration in m/s2', 'total distance in m', 'metabolic power in W/kg', 'acceleration load'
             ]
         }
     }

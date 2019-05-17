@@ -36,7 +36,9 @@ def newObject(self, collection, value, row, id):
                     self.validation_messages.append(create_new_message('alert-danger', '', '', 'Data does not include <<' + nested_value + '>> to get ' + nested_key + ' of object ' + str(id) + ' in ' + collection))
         elif nested_key == 'additional_fields':
             for additional_column in nested_value:
-                obj[utils.urlify(additional_column)] = row[additional_column]
+                obj[utils.urlify(additional_column)] = row.get(additional_column)
+                if obj[utils.urlify(additional_column)] is None:
+                    self.validation_messages.append(create_new_message('alert-warning', '', '', 'Data does not include <<' + additional_column + '>> of object ' + str(id) + ' in ' + collection))
     return obj
 
 
@@ -49,10 +51,15 @@ class DataImport():
         self.import_message = message
         self.data_file_name = file_name
         self.m = utils.get_document_by_id('mappings', self.mapping_id)
-
+        
     def validate(self):
-        ImportFile = {}
-        ListOfIds = {}
+        ds_validate = self.validate_datasource()
+        db_validate = self.validate_database()
+        return (ds_validate and db_validate), self.validation_messages
+
+    def validate_datasource(self):
+        self.ImportFile = {}
+        self.ListOfIds = {}
 
         self.validation_messages = []
         self.validation_messages.append(create_new_message('text', '', '', 'Import author: ' + self.author))
@@ -71,29 +78,33 @@ class DataImport():
                     if (check_user_input(feature_value)):
                         self.validation_messages.append(create_new_message('inputText', k, k, v['description']))
                     else:
-                        ImportFile[k] = (v['value'])
+                        self.ImportFile[k] = (v['value'])
                 elif (v['a'] == 'collection'):
                     for i, row in self.data.iterrows():
-                        if (k not in ImportFile.keys()):
-                            ImportFile[k] = []
-                            ListOfIds[k] = []
+                        if (k not in self.ImportFile.keys()):
+                            self.ImportFile[k] = []
+                            self.ListOfIds[k] = []
                         object_id_col = v['schema_identifier']
                         if (check_user_input(object_id_col)):
                             self.validation_messages.append(create_new_message('inputText', k, k, k + ' schema identifier'))
                         else:
                             object_id = row[object_id_col] if not object_id_col.startswith('dshs#mapping_') else object_id_col[len('dshs#mapping_'):]
-                            if (object_id not in ListOfIds[k]):
-                                ListOfIds[k].append(object_id)
-                                ImportFile[k].append(newObject(self,k,v,row, object_id))
+                            if (object_id not in self.ListOfIds[k]):
+                                self.ListOfIds[k].append(object_id)
+                                self.ImportFile[k].append(newObject(self,k,v,row, object_id))
 
             pp = pprint.PrettyPrinter(indent=4)
-            pp.pprint(ImportFile)
-            pp.pprint(ListOfIds)
+            pp.pprint(self.ImportFile)
+            pp.pprint(self.ListOfIds)
 
             print('new Import validated')
-            return True, self.validation_messages
+            return True
 
         else:
-            return False, self.validation_messages
+            return False
+        
+    def validate_database(self):
+        return True
+        
 
 

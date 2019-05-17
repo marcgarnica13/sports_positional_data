@@ -6,13 +6,13 @@
         <h2 class="card-title" style="margin-left: 10px">Validation report </h2>
         <div class="card-body">
             <h3 class="card-title" style="margin-left: 10px">Data source</h3>
-            <ul>
+            <ul class="list-group">
             {% for m in messages %}
-            <li>
+            <li class="list-group-item">
             <div class="row form-group" style="margin: 10px">
-                <label class="control-label {{ m['type'] }}">{{m['message']}}</label>
+                <div class="col-md-4"><label class="control-label {{ m['type'] }}">{{m['message']}}</label></div>
                 {% if m['type'] == 'inputText' %}
-                <input class="controls input-md col-md-8 form-control" style="margin-bottom: 10px; margin-left: 5em;" id="{{ m['id'] }}" name="{{ m['name'] }}" type="text">
+                <div class="col-md-8"><input class="controls form-control" style="margin-bottom: 10px;" id="{{ m['id'] }}" name="{{ m['name'] }}" type="text"></div>
                 {% endif %}
             </div>
             </li>
