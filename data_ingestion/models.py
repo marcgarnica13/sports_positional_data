@@ -121,10 +121,11 @@ class DataImport():
             print((api_url))
             response = requests.get(api_url, headers=headers)
             print(response.content)
+            jsonResponse = json.loads(response.content)
             if (response.status_code != 200):
                 new_items += 1
             else:
-                self.ListOfIds[collection][i] = (id, False)
+                self.ListOfIds[collection][i] = (jsonResponse['_id'], False)
                 update_items +=1
 
         return new_items, update_items
@@ -142,12 +143,26 @@ class DataImport():
     def run(self):
         list_of_response = ""
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-        for key, value in self.ImportFile.items():
-            api_url = '{0}{1}'.format(config.MONGODB_API_URL, key)
-            response = requests.post(api_url, headers=headers, data=json.dumps(value))
-            print(api_url)
-            print(response.content)
-            list_of_response += str(response.status_code)
+        for key in ['Teams', 'Participants', 'Games', 'GameSections']:
+            bulk_inserts = []
+            print(key)
+            for i, value in enumerate(self.ImportFile[key]):
+                id, new = self.ListOfIds[key][i]
+                if not new:
+                    api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, key, id)
+                    self.response = requests.patch(api_url, headers=headers, data=json.dumps(value))
+                    print(self.response.content)
+                    list_of_response += str(self.response.status_code)
+                else:
+                    bulk_inserts.append(value)
+
+
+            if len(bulk_inserts) != 0:
+                print('Creating new ' + key)
+                api_url = '{0}{1}'.format(config.MONGODB_API_URL, key)
+                self.response = requests.post(api_url, headers=headers, data=json.dumps(bulk_inserts))
+                print(self.response.content)
+                list_of_response += str(self.response.status_code)
 
         return list_of_response
 

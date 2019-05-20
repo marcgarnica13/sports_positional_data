@@ -173,3 +173,4 @@ fabric.properties
 
 #Application oriented
 /data_ingestion/temp
+/data_ingestion/logs
