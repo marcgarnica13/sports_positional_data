@@ -42,9 +42,18 @@ def validate():
     if not correct:
         return redirect(url_for("home.home"))
     else:
-        return render_template("validation.html", messages=messages)
+        return render_template("validation.html", messages=messages, args=request.args)
 
 @mod_home.route('/data_uploader', methods = ['POST'])
 def data_upload():
     print('data uploader')
-    return render_template("404.html")
+    newImport = DataImport(request.args['selected_mapping'],
+                           request.args['full_name'],
+                           request.args['message'],
+                           request.args['data_file_name'])
+    valid, messages = newImport.validate()
+    if valid:
+        report = newImport.run()
+        return render_template("error.html", error=report)
+    else:
+        return render_template('error.html', error='Import is not correct')

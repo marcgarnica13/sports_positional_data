@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 <!-- Complete card -->
-<form action="/data_uploader" class="form-horizontal" method="post" enctype="multipart/form-data" role="form">
+<form action=
+              "{{ url_for('home.data_upload', selected_mapping=args['selected_mapping'], full_name=args['full_name'], message=args['message'], data_file_name=args['data_file_name'])}}"
+class="form-horizontal" method="post" enctype="multipart/form-data" role="form">
     <div class="card">
         <h2 class="card-title" style="margin-left: 10px">Validation report </h2>
         <div class="card-body">
             <h3 class="card-title" style="margin-left: 10px">Data source</h3>
             <ul class="list-group">
-            {% for m in messages %}
+            {% for m in messages['DS'] %}
             <li class="list-group-item">
             <div class="row form-group" style="margin: 10px">
-                <div class="col-md-4"><label class="control-label {{ m['type'] }}">{{m['message']}}</label></div>
+                <div ><label class="control-label {{ m['type'] }}">{{m['message']}}</label></div>
                 {% if m['type'] == 'inputText' %}
-                <div class="col-md-8"><input class="controls form-control" style="margin-bottom: 10px;" id="{{ m['id'] }}" name="{{ m['name'] }}" type="text"></div>
+                <div class="" style="width: 100%"><input class="controls form-control" style="margin-bottom: 10px;" id="{{ m['id'] }}" name="{{ m['name'] }}" type="text"></div>
                 {% endif %}
             </div>
             </li>
@@ -21,11 +23,23 @@
         </div>
         <div class="card-body">
             <h3 class="card-title" style="margin-left: 10px">Database import</h3>
+            <ul class="list-group">
+            {% for m in messages['DB'] %}
+            <li class="list-group-item">
+            <div class="row form-group" style="margin: 10px">
+                <div ><label class="control-label {{ m['type'] }}">{{m['message']}}</label></div>
+                {% if m['type'] == 'inputText' %}
+                <div class="" style="width: 100%"><input class="controls form-control" style="margin-bottom: 10px;" id="{{ m['id'] }}" name="{{ m['name'] }}" type="text"></div>
+                {% endif %}
+            </div>
+            </li>
+            {% endfor %}
+            </ul>
         </div>
     </div>
     <div class="row" style="margin-top: 1em;">
         <button type="submit" class="btn btn btn-lg col-md-6">Confirm</button>
-        <a class="btn btn-danger" href="/" role="button">Cancel</a>
+        <a class="btn btn btn-lg col-md-6 btn-danger" href="/" role="button">Cancel</a>
     </div>
 </form>
 {% endblock %}
