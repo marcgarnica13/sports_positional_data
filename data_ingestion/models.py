@@ -98,8 +98,8 @@ class DataImport():
                             self.validation_messages['DS'].append(create_new_message('inputText', k + '#schema_identifier', k + '#schema_identifier', k + ' schema identifier'))
                         elif not input_asked:
                             object_id = str(row[object_id_col]) if not object_id_col.startswith('dshs#mapping_') else object_id_col[len('dshs#mapping_'):]
-                            if ((object_id, True) not in self.ListOfIds[k]):
-                                self.ListOfIds[k].append((object_id, True))
+                            if ((object_id, None, True) not in self.ListOfIds[k]):
+                                self.ListOfIds[k].append((object_id, None, True))
                                 self.ImportFile[k].append(newObject(self,k,v,row, object_id))
 
             pp = pprint.PrettyPrinter(indent=4)
@@ -115,7 +115,7 @@ class DataImport():
         new_items = 0
         update_items = 0
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-        for i, (id, new) in enumerate(id_list):
+        for i, (id, etag, new) in enumerate(id_list):
             print(i)
             api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL,collection, id)
             print((api_url))
@@ -125,7 +125,7 @@ class DataImport():
             if (response.status_code != 200):
                 new_items += 1
             else:
-                self.ListOfIds[collection][i] = (jsonResponse['_id'], False)
+                self.ListOfIds[collection][i] = (jsonResponse['_id'], jsonResponse['_etag'], False)
                 update_items +=1
 
         return new_items, update_items
@@ -147,10 +147,12 @@ class DataImport():
             bulk_inserts = []
             print(key)
             for i, value in enumerate(self.ImportFile[key]):
-                id, new = self.ListOfIds[key][i]
+                id, etag, new = self.ListOfIds[key][i]
                 if not new:
+                    etag_headers = headers
+                    etag_headers['If-Match'] = etag
                     api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, key, id)
-                    self.response = requests.patch(api_url, headers=headers, data=json.dumps(value))
+                    self.response = requests.patch(api_url, headers=etag_headers, data=json.dumps(value))
                     print(self.response.content)
                     list_of_response += str(self.response.status_code)
                 else:
