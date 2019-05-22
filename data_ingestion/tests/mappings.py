@@ -1,26 +1,86 @@
-mapping = {
-    'name' : 'testMapping',
-    #CSV, JSON, XML, AVRO, EXCEL, OWL
+default_mapping = {
+    'name': 'default_mapping',
+    # CSV, JSON, XML, AVRO, EXCEL, OWL
+    'file': {
+    },
+    'data_point': {
+        'source_name': {
+            'a': 'feature',
+            'value': '',
+            'description': ''
+        },
+
+        'source_identifier': {
+            'a': 'feature',
+            'value': '',
+            'description': ''
+        },
+
+        'Games': {
+            'a': 'collection',
+            'schema_identifier': '',
+        },
+
+        'Participants': {
+            'a': 'collection',
+            'schema_identifier': '',
+            'shirt_number': '',
+            'full_name': '',
+            'team_id': '',
+        },
+        'Teams': {
+            'a': 'collection',
+            'schema_identifier': '',
+            'name': ''
+        },
+        'GameSections': {
+            'a': 'collection',
+            'schema_identifier': '',
+            'game_id': '',
+            'moments': {
+                'a': 'nested_collection',
+                'schema_identifier': '',
+                'timestamp': '',
+                'participant': {
+                    'a': 'nested_array',
+                    'schema_identifier': '',
+                    'coord_x': '',
+                    'coord_y': '',
+                    'coord_z': '',
+                    'additional_fields': []
+                }
+            }
+        }
+    }
+}
+
+kinexon_mapping = {
+    'name': 'kinexon_mapping',
+    # CSV, JSON, XML, AVRO, EXCEL, OWL
     'file': {
         'format': 'csv',
         'delimiter': ';',
         'header': 0
     },
-    'data_point' : {
-        'source_name' : {
-            'a' : 'feature',
-            'value':'dshs#input',
+    'data_point': {
+
+        'source_name': {
+            'a': 'feature',
+            'value': 'dshs#input',
             'description': 'Source name'
         },
-        'source_identifier' : {
+
+        'source_identifier': {
             'a': 'feature',
-            'value':'dshs#input',
+            'value': 'dshs#input',
             'description': 'Source unique identifier'
         },
+
         'Games': {
             'a': 'collection',
             'schema_identifier': 'dshs#mapping_1',
         },
+
         'Participants': {
             'a': 'collection',
             'schema_identifier': 'sensor id',
@@ -36,9 +96,9 @@ mapping = {
         'GameSections': {
             'a': 'collection',
             'schema_identifier': 'dshs#mapping_1',
-            'game_id' : 'dshs#mapping_1',
+            'game_id': 'dshs#mapping_1',
             'moments': {
-                'a' : 'nested_collection',
+                'a': 'nested_collection',
                 'schema_identifier': 'ts in ms',
                 'timestamp': 'ts in ms',
                 'participant': {
@@ -47,8 +107,9 @@ mapping = {
                     'coord_x': 'x in m',
                     'coord_y': 'y in m',
                     'coord_z': 'z in m',
-                    'additional_fields' : [
-                        'speed in m/s', 'direction of movement in deg', 'acceleration in m/s2', 'total distance in m', 'metabolic power in W/kg', 'acceleration load'
+                    'additional_fields': [
+                        'speed in m/s', 'direction of movement in deg', 'acceleration in m/s2', 'total distance in m',
+                        'metabolic power in W/kg', 'acceleration load'
                     ]
                 }
             }

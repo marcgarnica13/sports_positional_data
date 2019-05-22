@@ -4,6 +4,7 @@ import os
 import requests
 import pprint
 import json
+import time
 
 from data_ingestion import config
 
@@ -47,6 +48,40 @@ class DataImport():
         db_validate = self._validate_database()
         return (ds_validate and db_validate), self.validation_messages
 
+    def run(self):
+        lg.info("Starting new import.")
+        list_of_response = ""
+        headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+
+        for key in ['Teams', 'Participants', 'Games', 'GameSections']:
+            bulk_inserts = []
+            lg.debug("Importing {0}.".format(key))
+
+            for id, document in self.ImportFile[key].items():
+                meta_info = self.ListOfIds[key][id]
+
+                if not meta_info['new']:
+                    lg.debug("Updating an already existing document in database.")
+                    lg.debug("Collection: {0}, Schema identifier: {1}".format(key, id))
+                    etag_headers = headers
+                    etag_headers['If-Match'] = meta_info['etag']
+                    api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, key, meta_info['object_id'])
+                    self.response = requests.patch(api_url, headers=etag_headers, data=json.dumps(document))
+                    lg.debug(self.response.content)
+                    list_of_response += str(self.response.status_code)
+                else:
+                    bulk_inserts.append(document)
+
+
+            if len(bulk_inserts) != 0:
+                lg.debug('Creating new document in {} collection'.format(key))
+                api_url = '{0}{1}'.format(config.MONGODB_API_URL, key)
+                self.response = requests.post(api_url, headers=headers, data=json.dumps(bulk_inserts))
+                lg.debug(self.response.content)
+                list_of_response += str(self.response.status_code)
+
+        return list_of_response
+
     def _validate_datasource(self):
         lg.info("Validation process: Data source")
         self.ImportFile = {}
@@ -67,9 +102,20 @@ class DataImport():
 
             data_points = self.m['data_point']
 
+            # Features are just one value for the whole import.
             for k, v in data_points.items():
-                self._process_data_point(k, v)
+                if v['a'] == 'feature':
+                    self._process_feature(k, v)
 
+            # Processing each point of the import data file
+            start = time.time()
+            for i, row in self.data.iterrows():
+                lg.debug("Processing data set row {0}".format(i))
+                for k, v in data_points.items():
+                    if v['a'] == 'collection':
+                        self._process_collection(k, v, row)
+
+            lg.debug("Data file processed in {} seconds.".format(time.time() - start))
             pp = pprint.PrettyPrinter(indent=4)
             pp.pprint(self.ImportFile)
             pp.pprint(self.ListOfIds)
@@ -79,31 +125,12 @@ class DataImport():
         else:
             return False
 
-    def _check_upsert(self, collection, id_list):
-        new_items = 0
-        update_items = 0
-        headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-        for i, (id, value) in enumerate(id_list.items()):
-            print(i)
-            api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL,collection, id)
-            print((api_url))
-            response = requests.get(api_url, headers=headers)
-            print(response.content)
-            jsonResponse = json.loads(response.content)
-            if (response.status_code != 200):
-                new_items += 1
-            else:
-                self.ListOfIds[collection][id]['object_id'] = jsonResponse['_id']
-                self.ListOfIds[collection][id]['etag'] = jsonResponse['_etag']
-                self.ListOfIds[collection][id]['new'] = False
-                update_items +=1
-        return new_items, update_items
-        
     def _validate_database(self):
         lg.info("Validation process: Database")
         self.validation_messages['DB'] = []
+
         for key in ['Teams', 'Participants', 'Games', 'GameSections']:
-            lg.debug("Validation import objects for collection {0}".format(key))
+            lg.debug("Validation database import for collection {0}".format(key))
             new_items, update_items = self._check_upsert(key, self.ListOfIds[key])
             self.validation_messages['DB'].append(create_new_message('text', '', '', '{} CREATE operations in collection {}.'.format(new_items, key)))
             self.validation_messages['DB'].append(create_new_message('text', '', '', '{} UPDATE operations in collection {}.'.format(update_items, key)))
@@ -112,100 +139,84 @@ class DataImport():
         pp.pprint(self.ListOfIds)
         return True
 
-    def run(self):
-        lg.info("Starting new import.")
-        list_of_response = ""
+    def _check_upsert(self, collection, id_list):
+        new_items = 0
+        update_items = 0
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-        for key in ['Teams', 'Participants', 'Games', 'GameSections']:
-            bulk_inserts = []
-            lg.debug("Importing {0}.".format(key))
 
-            for i, value in enumerate(self.ImportFile[key]):
-                id, etag, new = self.ListOfIds[key][i]
+        for i, (id, value) in enumerate(id_list.items()):
+            api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL,collection, id)
+            response = requests.get(api_url, headers=headers)
+            print(response.content)
+            jsonResponse = json.loads(response.content)
+            if (response.status_code != 200):
+                new_items += 1
+                self.ListOfIds[collection][id]['new'] = True
+            else:
+                self.ListOfIds[collection][id]['object_id'] = jsonResponse['_id']
+                self.ListOfIds[collection][id]['etag'] = jsonResponse['_etag']
+                self.ListOfIds[collection][id]['new'] = False
+                update_items +=1
+        return new_items, update_items
 
-                if not new:
-                    lg.debug("Updating an already existing document in database.")
-                    lg.debug("Collection: {0}, Schema identifier: {1}".format(key, value['schema_identifier']))
-                    etag_headers = headers
-                    etag_headers['If-Match'] = etag
-                    api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, key, id)
-                    self.response = requests.patch(api_url, headers=etag_headers, data=json.dumps(value))
-                    print(self.response.content)
-                    list_of_response += str(self.response.status_code)
-                else:
-                    bulk_inserts.append(value)
+    def _process_feature(self, feature_name, feature_value):
 
+        if (check_user_input(feature_value)):
+            self.validation_messages['DS'].append(create_new_message('inputText', feature_name, feature_name, feature_value['description']))
+        else:
+            lg.debug("Adding feature value to the import file = {0}".format(feature_value['value']))
+            self.ImportFile[feature_name] = (feature_value['value'])
 
-            if len(bulk_inserts) != 0:
-                print('Creating new ' + key)
-                api_url = '{0}{1}'.format(config.MONGODB_API_URL, key)
-                self.response = requests.post(api_url, headers=headers, data=json.dumps(bulk_inserts))
-                print(self.response.content)
-                list_of_response += str(self.response.status_code)
-
-        return list_of_response
-
-    def _process_data_point(self, dp_name, dp_obj):
+    def _process_collection(self, dp_name, dp_obj, row):
         lg.debug("Processing data point: {0}".format(dp_name))
 
-        if (dp_obj['a'] == 'feature'):
-            feature_value = dp_obj['value']
+        object_id_col = dp_obj['schema_identifier']
 
-            if (check_user_input(feature_value)):
-                self.validation_messages['DS'].append(create_new_message('inputText', dp_name, dp_name, dp_obj['description']))
+        if (check_user_input(object_id_col)):
+            self.validation_messages['DS'].append(
+                create_new_message('inputText', dp_name + '#schema_identifier', dp_name + '#schema_identifier',
+                                   dp_name + ' schema identifier'))
+
+        else:
+            object_id = str(row[object_id_col]) \
+                if not object_id_col.startswith('dshs#mapping_') else object_id_col[len('dshs#mapping_'):]
+
+            if object_id not in self.ListOfIds.setdefault(dp_name, {}).keys():
+                lg.debug("New instance of {0} with identifier {1}".format(dp_name, object_id))
+                self.ListOfIds.setdefault(dp_name, {})[object_id] = {}
+                self.ImportFile.setdefault(dp_name, {})[object_id] = self._new_object(collection=dp_name, value=dp_obj, row=row, id=object_id)
+
             else:
-                lg.debug("Adding feature value to the import file = {0}".format(dp_obj['value']))
-                self.ImportFile[dp_name] = (dp_obj['value'])
+                lg.debug("Updating an existing object of {0} with identifier {1}".format(dp_name, object_id))
+                new_object = self._new_object(collection=dp_name, value=dp_obj, row=row, id=object_id)
+                self._merge_objects(current=self.ImportFile[dp_name][object_id], new=new_object)
 
-        elif dp_obj['a'] == 'collection':
-            object_id_col = dp_obj['schema_identifier']
-            if (check_user_input(object_id_col)):
-                self.validation_messages['DS'].append(
-                    create_new_message('inputText', dp_name + '#schema_identifier', dp_name + '#schema_identifier',
-                                       dp_name + ' schema identifier'))
-            else:
-                lg.debug("Adding new key to import files.")
-                self.ImportFile[dp_name] = {}
-                self.ListOfIds[dp_name] = {}
-
-                for i, row in self.data.iterrows():
-                    lg.debug("Processing data set row {0}".format(i))
-                    object_id = str(row[object_id_col]) \
-                        if not object_id_col.startswith('dshs#mapping_') else object_id_col[len('dshs#mapping_'):]
-
-                    if object_id not in self.ListOfIds[dp_name].keys():
-                        lg.debug("New instance of {0} with identifier {1}".format(dp_name, object_id))
-                        self.ListOfIds[dp_name][object_id] = {}
-                        self.ListOfIds[dp_name][object_id]['new'] = False
-                        self.ImportFile[dp_name][object_id]= self._newObject(collection=dp_name, value=dp_obj, row=row, id=object_id)
-
-                    else:
-                        lg.debug("Updating an existing object of {0} with identifier {1}".format(dp_name, object_id))
-                        new_object = self._newObject(collection=dp_name, value=dp_obj, row=row, id=object_id)
-                        self._merge_objects(current=self.ImportFile[dp_name][object_id], new=new_object)
-
-    def _newObject(self, collection, value, row, id):
+    def _new_object(self, collection, value, row, id):
         obj = {}
         obj['schema_identifier'] = str(id)
         lg.debug("Preparing new object for {0} with schema identifier {1}".format(collection, id))
 
         for nested_key, nested_value in value.items():
-            lg.debug("--Processing {}".format(nested_key))
+            lg.debug(" >> Processing {}".format(nested_key))
 
             if type(nested_value) is dict:
                 if nested_value['a'] == 'nested_array':
-                    if obj.get('{}_index'.format(nested_key)) is None:
-                        obj['{}_index'.format(nested_key)] = \
-                            [k for k in nested_value.keys() if k not in ["a", "schema_identifier", "additional_fields"]] \
-                            + [utils.urlify(add_k) for add_k in nested_value["additional_fields"]]
                     new_nested_array = []
+
                     for k, v in nested_value.items():
                         if k not in ["a", "schema_identifier", "additional_fields"]:
+
                             new_nested_array.append(row.get(v))
                         elif k == "additional_fields":
                             for field in v:
                                 new_nested_array.append(row.get(field))
+
                     obj[str(row.get(nested_value['schema_identifier']))] = new_nested_array
+                    obj['{}_rows'.format(nested_key)] = []
+                    obj['{}_rows'.format(nested_key)].append(row.get(nested_value['schema_identifier']))
+                    obj['{}_cols'.format(nested_key)] = \
+                        [k for k in nested_value.keys() if k not in ["a", "schema_identifier", "additional_fields"]] \
+                        + [utils.urlify(add_k) for add_k in nested_value["additional_fields"]]
 
                 elif nested_value['a'] == 'nested_collection':
                     object_id_col = nested_value['schema_identifier']
@@ -219,7 +230,7 @@ class DataImport():
                         object_id = str(row[object_id_col]) if not object_id_col.startswith(
                             'dshs#mapping_') else object_id_col[len('dshs#mapping_'):]
                         obj[nested_key] = {}
-                        obj[nested_key][object_id] = self._newObject("{}>{}".format(collection, nested_key), nested_value, row, object_id)
+                        obj[nested_key][object_id] = self._new_object("{}>{}".format(collection, nested_key), nested_value, row, object_id)
 
             elif (nested_key not in ['a', 'schema_identifier', 'additional_fields']):
                 if check_user_input(nested_value):
