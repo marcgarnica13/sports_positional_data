@@ -71,7 +71,7 @@ class PreDataImport():
             bulk_inserts = []
             lg.debug("Importing {0}.".format(key))
 
-            for id, document in self.ImportFile[key].items():
+            for id, document in self.DataFromSource[key].items():
                 meta_info = self.ListOfIds[key][id]
 
                 if not meta_info['new']:
@@ -98,7 +98,7 @@ class PreDataImport():
 
     def _validate_datasource(self):
         lg.info("Validation process: Data source")
-        self.ImportFile = {}
+        self.DataFromSource = {}
         self.ListOfIds = {}
 
         self.validation_messages = {}
@@ -131,7 +131,7 @@ class PreDataImport():
 
             lg.debug("Data file processed in {} seconds.".format(time.time() - start))
             pp = pprint.PrettyPrinter(indent=4)
-            pp.pprint(self.ImportFile)
+            pp.pprint(self.DataFromSource)
             pp.pprint(self.ListOfIds)
 
             return True
@@ -179,7 +179,7 @@ class PreDataImport():
             self.validation_messages['DS'].append(create_new_message('inputText', feature_name, feature_name, feature_value['description']))
         else:
             lg.debug("Adding feature value to the import file = {0}".format(feature_value['value']))
-            self.ImportFile[feature_name] = (feature_value['value'])
+            self.DataFromSource[feature_name] = (feature_value['value'])
 
     def _process_collection(self, dp_name, dp_obj, row):
         lg.debug("Processing data point: {0}".format(dp_name))
@@ -198,12 +198,12 @@ class PreDataImport():
             if object_id not in self.ListOfIds.setdefault(dp_name, {}).keys():
                 lg.debug("New instance of {0} with identifier {1}".format(dp_name, object_id))
                 self.ListOfIds.setdefault(dp_name, {})[object_id] = {}
-                self.ImportFile.setdefault(dp_name, {})[object_id] = self._new_object(collection=dp_name, value=dp_obj, row=row, id=object_id)
+                self.DataFromSource.setdefault(dp_name, {})[object_id] = self._new_object(collection=dp_name, value=dp_obj, row=row, id=object_id)
 
             else:
                 lg.debug("Updating an existing object of {0} with identifier {1}".format(dp_name, object_id))
                 new_object = self._new_object(collection=dp_name, value=dp_obj, row=row, id=object_id)
-                self._merge_objects(current=self.ImportFile[dp_name][object_id], new=new_object)
+                self._merge_objects(current=self.DataFromSource[dp_name][object_id], new=new_object)
 
     def _new_object(self, collection, value, row, id):
         obj = {}
@@ -301,8 +301,7 @@ class DataImport():
     def validate(self):
         lg.info("New import validation process")
         ds_validate = self._validate_datasource()
-        #db_validate = self._validate_database()
-        db_validate = True
+        db_validate = self._validate_database()
         return (ds_validate and db_validate), self.validation_messages
 
     def run(self):
@@ -310,11 +309,21 @@ class DataImport():
         list_of_response = ""
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
-        for collection, doc_set in self.ImportFile.items():
+        for collection, json_doc_set in self.IndividualImport.items():
+            for doc in json_doc_set:
+                lg.debug("Updating an already existing document in database.")
+                lg.debug("Collection: {0}, Schema identifier: {1}".format(collection, doc['schema_identifier']))
+                etag_headers = headers
+                etag_headers['If-Match'] = self.MetaImport[collection][doc['schema_identifier']]['etag']
+                api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, collection, self.MetaImport[collection][doc['schema_identifier']]['object_id'])
+                self.response = requests.patch(api_url, headers=etag_headers, data=json.dumps(doc))
+                print(self.response.content)
+                list_of_response += str(self.response.status_code)
+
+        for collection, json_doc_set in self.BulkImport.items():
             lg.debug('Creating new document in {} collection'.format(collection))
-            print(doc_set)
             api_url = '{0}{1}'.format(config.MONGODB_API_URL, collection)
-            self.response = requests.post(api_url, headers=headers, data=json.loads(doc_set))
+            self.response = requests.post(api_url, headers=headers, data=json.dumps(json_doc_set))
             lg.debug(self.response.content)
             list_of_response += str(self.response.status_code)
 
@@ -322,8 +331,11 @@ class DataImport():
 
     def _validate_datasource(self):
         lg.info("Validation process: Data source")
-        self.ImportFile = {}
-        self.ListOfIds = {}
+        self.DataFromSource = {}
+        self.BulkImport = {}
+        self.IndividualImport = {}
+        self.MetaImport = {}
+
 
         self.validation_messages = {}
         self.validation_messages['DS'] = []
@@ -348,46 +360,46 @@ class DataImport():
                 elif data_definition['a'] == 'collection':
                     self._process_collection(data_key, data_definition)
 
-            print(self.ImportFile)
+            print(self.DataFromSource)
             return True
 
         else:
             return False
 
-    def _validate_database(self):
+    def _validate_database(self, dry_run=True):
         lg.info("Validation process: Database")
         self.validation_messages['DB'] = []
 
-        for key in self.ImportFile.keys():
-            lg.debug("Validation database import for collection {0}".format(key))
-            new_items, update_items = self._check_upsert(key, self.ListOfIds[key])
+        for collection, doc_set in self.DataFromSource.items():
+            lg.debug("Validation database import for collection {0}".format(collection))
+            new_items, update_items = self._check_upsert(collection, doc_set)
             self.validation_messages['DB'].append(
-                create_new_message('text', '', '', '{} CREATE operations in collection {}.'.format(new_items, key)))
+                create_new_message('text', '', '', '{} CREATE operations in collection {}.'.format(new_items, collection)))
             self.validation_messages['DB'].append(
-                create_new_message('text', '', '', '{} UPDATE operations in collection {}.'.format(update_items, key)))
+                create_new_message('text', '', '', '{} UPDATE operations in collection {}.'.format(update_items, collection)))
 
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(self.ListOfIds)
         return True
 
-    def _check_upsert(self, collection, id_list):
+    def _check_upsert(self, collection, doc_set):
         new_items = 0
         update_items = 0
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
-        for i, (id, value) in enumerate(id_list.items()):
-            api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, collection, id)
+        for doc in doc_set:
+            json_doc = json.loads(doc)
+            api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, collection, json_doc['schema_identifier'])
             response = requests.get(api_url, headers=headers)
             print(response.content)
             jsonResponse = json.loads(response.content)
             if (response.status_code != 200):
                 new_items += 1
-                self.ListOfIds[collection][id]['new'] = True
+                self.BulkImport.setdefault(collection, []).append(json_doc)
             else:
-                self.ListOfIds[collection][id]['object_id'] = jsonResponse['_id']
-                self.ListOfIds[collection][id]['etag'] = jsonResponse['_etag']
-                self.ListOfIds[collection][id]['new'] = False
+                self.IndividualImport.setdefault(collection, []).append(json_doc)
+                self.MetaImport.setdefault(collection, {}).setdefault(json_doc['schema_identifier'], {})['object_id'] = jsonResponse['_id']
+                self.MetaImport[collection][json_doc['schema_identifier']]['etag'] = jsonResponse['_etag']
                 update_items += 1
+
         return new_items, update_items
 
     def _process_feature(self, feature_name, feature_value):
@@ -397,7 +409,7 @@ class DataImport():
                 create_new_message('inputText', feature_name, feature_name, feature_value['description']))
         else:
             lg.debug("Adding feature value to the import file = {0}".format(feature_value['value']))
-            self.ImportFile[feature_name] = (feature_value['value'])
+            self.DataFromSource[feature_name] = (feature_value['value'])
 
     def _process_collection(self, collection_name, collection_description, dry_run=True, nested=False):
         lg.debug("Processing data point: {0}".format(collection_name))
@@ -416,8 +428,6 @@ class DataImport():
             array_alias_mapping = []
             select_literals = []
             select_literals_alias = []
-            nested_collection_name = None
-            join_key = ""
 
             for attribute, pointer in collection_description.items():
                 lg.debug(" >> Processing {}".format(attribute))
@@ -468,7 +478,7 @@ class DataImport():
                     collection_data = self.df.select([functions.col(c).alias(select_alias_mapping[i]) for i,c in enumerate(select_cols)] + [functions.lit(m).alias(select_literals_alias[i]) for i,m in enumerate(select_literals)])\
                     .distinct().toJSON()
 
-                    self.ImportFile[collection_name] = collection_data.collect()
+                    self.DataFromSource[collection_name] = collection_data.collect()
 
 
                 else:
@@ -489,5 +499,5 @@ class DataImport():
                         functions.collect_list(functions.struct(*[c for c in (array_alias_mapping)])).alias(nested_array_name)
                     ).toJSON().map(lambda row: add_array_index(row, index_list=array_alias_mapping, array_name=nested_array_name))
 
-                    self.ImportFile[collection_name] = collection_data.collect()
+                    self.DataFromSource[collection_name] = collection_data.collect()
 
