@@ -60,9 +60,9 @@ kinexon_mapping = {
     'file': {
         'format': 'csv',
         'delimiter': ';',
-        'header': 0
+        'header': 'True'
     },
-    'data_point': {
+    'data': {
 
         'source_name': {
             'a': 'feature',
@@ -96,14 +96,16 @@ kinexon_mapping = {
         'GameSections': {
             'a': 'collection',
             'schema_identifier': 'dshs#mapping_1',
-            'game_id': 'dshs#mapping_1',
-            'moments': {
-                'a': 'nested_collection',
+            'game_id': 'dshs#mapping_1'
+        },
+        'Moments': {
+                'a': 'collection',
                 'schema_identifier': 'ts in ms',
                 'timestamp': 'ts in ms',
-                'participant': {
+                'section_id': 'dshs#mapping_1',
+                'participants': {
                     'a': 'nested_array',
-                    'schema_identifier': 'sensor id',
+                    'id': 'sensor id',
                     'coord_x': 'x in m',
                     'coord_y': 'y in m',
                     'coord_z': 'z in m',
@@ -113,6 +115,6 @@ kinexon_mapping = {
                     ]
                 }
             }
-        }
     }
 }
+
