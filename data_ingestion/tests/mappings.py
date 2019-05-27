@@ -96,10 +96,10 @@ kinexon_mapping = {
         'GameSections': {
             'a': 'collection',
             'schema_identifier': 'dshs#mapping_1',
-            'game_id': 'dshs#mapping_1'
-        },
-        'Moments': {
-                'a': 'collection',
+            'game_id': 'dshs#mapping_1',
+            'moments': {
+                'a': 'nested_collection',
+                'join_key': 'section_id',
                 'schema_identifier': 'ts in ms',
                 'timestamp': 'ts in ms',
                 'section_id': 'dshs#mapping_1',
@@ -116,5 +116,7 @@ kinexon_mapping = {
                 }
             }
     }
+        },
+
 }
 

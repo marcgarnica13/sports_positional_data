@@ -22,6 +22,7 @@ app.config.from_object(config)
 app.jinja_env.lstrip_blocks = True
 app.jinja_env.trim_blocks = True
 
+
 # HTTP error handling for non-existing URL or server errors
 @app.errorhandler(exc.HTTPException)
 def error_handler(error):

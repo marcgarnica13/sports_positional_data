@@ -1,6 +1,8 @@
 import os
 import re
 import shutil
+import json
+import logging as lg
 
 from werkzeug.utils import secure_filename
 
@@ -60,4 +62,12 @@ def urlify(s):
     # Replace all runs of whitespace with a single dash
     s = re.sub(r"\s+", '_', s)
     return s
+
+def json_groupby_attribute(docs, attribute):
+    grouped_doc = {}
+    for doc in docs:
+        json_doc = json.loads(doc)
+        grouped_doc.setdefault(json_doc[attribute], []).append(json_doc)
+
+    return json.dumps(grouped_doc)
 
