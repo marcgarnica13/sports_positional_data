@@ -1,20 +1,15 @@
 import logging as lg
-import pandas as pd
 import os
 import requests
-import pprint
 import json
 import time
 
-from pyspark import SparkContext
-from pyspark.sql import SQLContext
+from pyspark import SparkContext, SparkConf
+from pyspark.sql import SQLContext, SparkSession
 from pyspark.sql import functions
 
 from data_ingestion import config
-
 from data_ingestion import utils
-
-pd.set_option('display.max_columns', 500)
 
 def create_new_message(type, id, name, message):
     lg.debug("New message added {0} {1}".format(id, message))
@@ -51,10 +46,10 @@ class DataImport():
         self.m = utils.get_document_by_id('mappings', self.mapping_id)
 
         self.sc = SparkContext.getOrCreate()
-        self.sc.setLogLevel("ERROR")
+        lg.getLogger('pyspark').setLevel(lg.ERROR)
         self.sqlContext = SQLContext(sparkContext=self.sc)
 
-        lg.info("New data import correcte initialized")
+        lg.info("New data import initialized")
 
     def validate(self):
         lg.info("New import validation process")
@@ -111,6 +106,7 @@ class DataImport():
 
         if utils.check_folder(os.path.join('temp', self.data_file_name), False):
             lg.debug("Accessing temporal folder to read the import data file.")
+            #self.fileProcessor = utils.new_file_processor(self.m['file']['format'])
             self.df = self.sqlContext.read.csv(os.path.join('temp', self.data_file_name), header=self.m['file']['header'], sep=self.m['file']['delimiter'], inferSchema=True)
 
             for data_key, data_definition in self.m['data'].items():
@@ -272,5 +268,76 @@ class DataImport():
 
         return
 
+class XMLDataImport():
 
+    def __init__(self, mapping, name, message, file_name):
+        lg.info("New data import: {0}-{1}-{2}-{3}".format(mapping, name, message, file_name))
+        self.mapping_id = mapping
+        self.author = name
+        self.import_message = message
+        self.data_file_name = file_name
+        self.m = utils.get_document_by_id('mappings', self.mapping_id)
 
+        #self.sc = SparkContext.getOrCreate()
+        #self.sqlContext = SQLContext(sparkContext=self.sc)
+
+        lg.info("New data import initialized")
+
+    def validate(self):
+        lg.info("New import validation process")
+        ds_validate = self._validate_datasource()
+        return ds_validate, self.validation_messages
+
+    def _validate_datasource(self):
+        lg.info("Validation process: Data source")
+        self.DataFromSource = {}
+        self.NestedCollections = {}
+        self.BulkImport = {}
+        self.IndividualImport = {}
+        self.MetaImport = {}
+
+        self.validation_messages = {}
+        self.validation_messages['DS'] = []
+
+        self.validation_messages['DS'].append(create_new_message('text', '', '', 'Import author: ' + self.author))
+        self.validation_messages['DS'].append(
+            create_new_message('text', '', '', 'Import message: ' + self.import_message))
+        self.validation_messages['DS'].append(
+            create_new_message('text', '', '', 'Import data file: ' + self.data_file_name))
+        self.validation_messages['DS'].append(
+            create_new_message('text', '', '', 'Data file mapping: ' + self.m['name']))
+        self.validation_messages['DS'].append(
+            create_new_message('text', '', '', 'Data file format: ' + self.m['file']['format']))
+
+        if utils.check_folder(os.path.join('temp', self.data_file_name), False):
+            lg.debug("Accessing temporal folder to read the import data file.")
+            conf = SparkConf()
+            conf.set('spark.logConf', 'true')
+            spark = SparkSession.builder.config(conf=conf).getOrCreate()
+            spark.sparkContext.setLogLevel("ERROR")
+            start = time.time()
+            self.df = spark.read.format('xml').options(rowtag='FrameSet').load(os.path.join('temp', self.data_file_name))
+            self.df.printSchema()
+
+            frame_df = self.df.select('*', functions.explode("Frame").alias("Moment")).select('*', functions.col("Moment._N").alias("Moment_id")).\
+                groupBy("Moment_id", "Moment._T", "_GameSection", "Moment._BallStatus", "Moment._BallPossession").agg(functions.collect_list(functions.struct("_PersonId", "Moment._M", "Moment._S", "Moment._T", "Moment._X", "Moment._Y" "Moment._Z")).alias("participants")).persist()
+
+            frame_df.printSchema()
+            print(frame_df.filter(functions.col('Moment_id') == 100001).show(20, False))
+            #print(frame_df.toJSON().collect())
+            #print(self.df.select('Frame').show(10, False))
+            print("{} seconds".format(time.time() - start))
+
+        '''
+            for data_key, data_definition in self.m['data'].items():
+                if data_definition['a'] == 'feature':
+                    self._process_feature(data_key, data_definition)
+                elif data_definition['a'] == 'collection':
+                    self.DataFromSource[data_key] = self._process_collection(data_key, data_definition).collect()
+
+            return True
+
+        else:
+            return False
+        
+        '''

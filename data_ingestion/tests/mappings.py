@@ -63,7 +63,6 @@ kinexon_mapping = {
         'header': 'True'
     },
     'data': {
-
         'source_name': {
             'a': 'feature',
             'value': 'dshs#input',
@@ -115,8 +114,68 @@ kinexon_mapping = {
                     ]
                 }
             }
+        }
     }
+}
+
+dfl_mapping = {
+    'name': 'default_mapping',
+    # CSV, JSON, XML, AVRO, EXCEL, OWL
+    'file': {
+        'format':'xml',
+        'rowTag': 'FrameSet'
+    },
+    'data_point': {
+        'source_name': {
+            'a': 'feature',
+            'value': 'dshs#input',
+            'description': 'Source name'
         },
 
+        'source_identifier': {
+            'a': 'feature',
+            'value': 'dshs#input',
+            'description': 'Source unique identifier'
+        },
+
+        'Games': {
+            'a': 'collection',
+            'schema_identifier': 'FrameSet/_MatchId',
+            "additional_fields": [
+                "Metadata/PitchSize/*"
+                ]
+        },
+
+        'Participants': {
+            'a': 'collection',
+            'schema_identifier': '_PersonId',
+            'shirt_number': '',
+            'full_name': '',
+            'team_id': '',
+        },
+        'Teams': {
+            'a': 'collection',
+            'schema_identifier': '',
+            'name': ''
+        },
+        'GameSections': {
+            'a': 'collection',
+            'schema_identifier': '',
+            'game_id': '',
+            'moments': {
+                'a': 'nested_collection',
+                'schema_identifier': '',
+                'timestamp': '',
+                'participant': {
+                    'a': 'nested_array',
+                    'schema_identifier': '',
+                    'coord_x': '',
+                    'coord_y': '',
+                    'coord_z': '',
+                    'additional_fields': []
+                }
+            }
+        }
+    }
 }
 

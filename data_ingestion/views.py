@@ -10,7 +10,7 @@ from flask import \
 
 from data_ingestion import utils
 from data_ingestion.forms import UploadForm
-from data_ingestion.models import DataImport
+from data_ingestion.models import DataImport, XMLDataImport
 
 mod_home = Blueprint('home', __name__, url_prefix='/')
 
@@ -34,7 +34,7 @@ def home():
 
 @mod_home.route('/data_validation', methods = ['GET','POST'])
 def validate():
-    newImport = DataImport(request.args['selected_mapping'],
+    newImport = XMLDataImport(request.args['selected_mapping'],
                            request.args['full_name'],
                            request.args['message'],
                            request.args['data_file_name'])

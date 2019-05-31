@@ -41,7 +41,7 @@ def get_mappings_collection():
     return mappings_list
 
 def get_document_by_id(collection_name, doc_id):
-    return mappings.kinexon_mapping
+    return mappings.dfl_mapping
 
 def save_temp_file(f):
     check_folder('temp')
