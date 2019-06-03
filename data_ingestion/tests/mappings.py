@@ -123,9 +123,9 @@ dfl_mapping = {
     # CSV, JSON, XML, AVRO, EXCEL, OWL
     'file': {
         'format':'xml',
-        'rowTag': 'FrameSet'
+        'rowTag': 'Positions'
     },
-    'data_point': {
+    'data': {
         'source_name': {
             'a': 'feature',
             'value': 'dshs#input',
@@ -140,42 +140,18 @@ dfl_mapping = {
 
         'Games': {
             'a': 'collection',
-            'schema_identifier': 'FrameSet/_MatchId',
+            'schema_identifier': 'Metadata._MatchId',
             "additional_fields": [
-                "Metadata/PitchSize/*"
+                "Metadata.PitchSize._X", "Metadata.PitchSize._Y"
                 ]
         },
 
         'Participants': {
             'a': 'collection',
-            'schema_identifier': '_PersonId',
-            'shirt_number': '',
-            'full_name': '',
-            'team_id': '',
-        },
-        'Teams': {
-            'a': 'collection',
-            'schema_identifier': '',
-            'name': ''
-        },
-        'GameSections': {
-            'a': 'collection',
-            'schema_identifier': '',
-            'game_id': '',
-            'moments': {
-                'a': 'nested_collection',
-                'schema_identifier': '',
-                'timestamp': '',
-                'participant': {
-                    'a': 'nested_array',
-                    'schema_identifier': '',
-                    'coord_x': '',
-                    'coord_y': '',
-                    'coord_z': '',
-                    'additional_fields': []
-                }
-            }
+            'schema_identifier': 'FrameSet/_PersonId',
+            'team_id': 'FrameSet/_TeamId',
         }
+
     }
 }
 

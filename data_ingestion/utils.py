@@ -40,8 +40,12 @@ def get_mappings_collection():
     mappings_list = [('0', 'firstMapping'), ('1', 'secondMapping')]
     return mappings_list
 
-def get_document_by_id(collection_name, doc_id):
-    return mappings.dfl_mapping
+def get_document_by_id(collection_name, mapping_number):
+    print(mapping_number)
+    if mapping_number == '0':
+        return mappings.kinexon_mapping
+    else:
+        return mappings.dfl_mapping
 
 def save_temp_file(f):
     check_folder('temp')
@@ -70,4 +74,9 @@ def json_groupby_attribute(docs, attribute):
         grouped_doc.setdefault(json_doc[attribute], []).append(json_doc)
 
     return json.dumps(grouped_doc)
+
+def add_array_index(row, index_list, array_name):
+    json_row = json.loads(row)
+    json_row["{}_cols".format(array_name)] = index_list
+    return json.dumps(json_row)
 

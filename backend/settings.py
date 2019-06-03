@@ -42,6 +42,13 @@ gameSections = {
     'schema': basic_schema
 }
 
+moments = {
+    'item_title': 'Moment',
+    'allow_unknown': True,
+    'additional_lookup' : schema_lookup,
+    'schema': basic_schema
+}
+
 DOMAIN = {
     'mappings': mappings,
     'Games': games,
