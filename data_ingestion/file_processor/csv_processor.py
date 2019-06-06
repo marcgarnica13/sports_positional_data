@@ -58,7 +58,7 @@ class CSVProcessor(Basic):
                     [functions.col(m) for m in la]
                 ) \
                     .agg(
-                    functions.collect_list(functions.struct(*[c for c in (aa)])).alias(
+                    functions.collect_set(functions.struct(*[c for c in (aa)])).alias(
                         self.nested_array_name)
                 ).toJSON().map(
                     lambda row: utils.add_array_index(row, index_list=aa, array_name=nested_name)).collect()

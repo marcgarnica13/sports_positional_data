@@ -139,7 +139,34 @@ dfl_mapping = {
             'description': 'Source unique identifier'
         },
 
-        'GameSections': {
+        'Games': {
+            'a': 'collection',
+            'schema_identifier': 'Metadata._MatchId',
+            "additional_fields": [
+                "Metadata.PitchSize._X", "Metadata.PitchSize._Y"
+                ],
+            "gameSections" : {
+                'a': 'nested_array',
+                'id': 'FrameSet/_GameSection'
+            }
+        },
+
+        'Teams': {
+            'a': 'collection',
+            'schema_identifier': 'FrameSet/_TeamId',
+        },
+
+        'Participants': {
+            'a': 'collection',
+            'schema_identifier': 'FrameSet/_PersonId',
+            'team_id': 'FrameSet/_TeamId',
+        }
+
+    }
+}
+
+'''
+'GameSections': {
             'a': 'collection',
             'schema_identifier': 'FrameSet/_GameSection',
             'game_id': 'FrameSet/_MatchId',
@@ -161,28 +188,5 @@ dfl_mapping = {
                 }
             }
         }
-
-    }
-}
-
 '''
-
-        'Games': {
-            'a': 'collection',
-            'schema_identifier': 'Metadata._MatchId',
-            "additional_fields": [
-                "Metadata.PitchSize._X", "Metadata.PitchSize._Y"
-                ]
-        },
-
-        'Teams': {
-            'a': 'collection',
-            'schema_identifier': 'FrameSet/_TeamId',
-        },
-
-        'Participants': {
-            'a': 'collection',
-            'schema_identifier': 'FrameSet/_PersonId',
-            'team_id': 'FrameSet/_TeamId',
-        },'''
 

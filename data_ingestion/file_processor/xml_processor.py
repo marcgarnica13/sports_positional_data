@@ -92,14 +92,14 @@ class XMLProcessor(Basic):
                 select(
                         [functions.col(c).alias(ca[i]) for i, c in enumerate(c)] +
                         [functions.lit(c).alias(la[i]) for i, c in enumerate(l)] +
-                        [functions.col(c).alias(aa[i]) for i, c in enumerate(a)] +
+                        [functions.col(c).alias(aa[i]) for i, c in enumerate(a)]
                         [functions.col('_Frame._BallPossession').alias('BallPossession'), functions.col('_Frame._BallStatus').alias('BallStatus')]
                     )\
                 .groupBy(
                         [functions.col(c) for c in ca] +
                         [functions.col(m) for m in la]
                     )\
-                .agg(functions.sum('BallStatus').alias('BallStatus'), functions.sum('BallPossession').alias('BallPossession'), functions.collect_list(functions.array(*[c for c in (aa)])).alias(nested_name))\
+                .agg(functions.sum('BallStatus').alias('BallStatus'), functions.sum('BallPossession').alias('BallPossession'), functions.collect_set(functions.array(*[c for c in (aa)])).alias(nested_name))\
                     .toJSON().map(
                     lambda row: utils.add_array_index(row, index_list=aa, array_name=nested_name)).collect()
 
