@@ -61,7 +61,7 @@ kinexon_mapping = {
         'format': 'csv',
         'delimiter': ';',
         'header': 'True',
-        'timestamp_format': ''
+        'timestamp_format': 'ms'
     },
     'data': {
         'source_name': {
@@ -99,13 +99,12 @@ kinexon_mapping = {
             'game_id': 'dshs#mapping_1',
             'moments': {
                 'a': 'nested_collection',
-                'join_key': 'section_id',
-                'schema_identifier': 'ts in ms',
+                'n_id': 'ts in ms',
                 'timestamp': 'ts in ms',
                 'section_id': 'dshs#mapping_1',
                 'participants': {
                     'a': 'nested_array',
-                    'id': 'sensor id',
+                    'a_id': 'sensor id',
                     'coord_x': 'x in m',
                     'coord_y': 'y in m',
                     'coord_z': 'z in m',
@@ -144,11 +143,7 @@ dfl_mapping = {
             'schema_identifier': 'Metadata._MatchId',
             "additional_fields": [
                 "Metadata.PitchSize._X", "Metadata.PitchSize._Y"
-                ],
-            "gameSections" : {
-                'a': 'nested_array',
-                'id': 'FrameSet/_GameSection'
-            }
+                ]
         },
 
         'Teams': {
@@ -160,25 +155,20 @@ dfl_mapping = {
             'a': 'collection',
             'schema_identifier': 'FrameSet/_PersonId',
             'team_id': 'FrameSet/_TeamId',
-        }
+        },
 
-    }
-}
-
-'''
-'GameSections': {
+        'GameSections': {
             'a': 'collection',
             'schema_identifier': 'FrameSet/_GameSection',
             'game_id': 'FrameSet/_MatchId',
             'moments': {
                 'a': 'nested_collection',
-                'join_key': 'section_id',
-                'schema_identifier': 'FrameSet/Frame/_N',
+                'n_id': 'FrameSet/Frame/_N',
                 'timestamp': 'FrameSet/Frame/_T',
                 'section_id': 'FrameSet/_GameSection',
                 'participants': {
                     'a': 'nested_array',
-                    'id': 'FrameSet/_PersonId',
+                    'a_id': 'FrameSet/_PersonId',
                     'coord_x': 'FrameSet/Frame/_X',
                     'coord_y': 'FrameSet/Frame/_Y',
                     'coord_z': 'FrameSet/Frame/_Z',
@@ -188,5 +178,11 @@ dfl_mapping = {
                 }
             }
         }
+
+    }
+}
+
+'''
+
 '''
 

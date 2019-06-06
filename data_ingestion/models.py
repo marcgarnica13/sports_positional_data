@@ -122,12 +122,16 @@ class DataImport():
                     start = time.time()
                     self.DataFromSource[data_key] = self._process_collection(data_key, data_definition)
                     lg.debug("Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
+                elif data_definition['a'] == 'partitioned_collection':
+                    start = time.time()
+                    self.DataFromSource[data_key] = self._process_collection(data_key, data_definition, partition=True)
+                    lg.debug(
+                        "Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
 
             self.validation_messages['DS'].append(
                 create_new_message('text', '', '', 'Data source validated in {} seconds'.format(time.time() - start)))
 
-            print(self.DataFromSource)
-            print(self.NestedCollections)
+
 
             return True
         else:
@@ -163,7 +167,7 @@ class DataImport():
             jsonResponse = json.loads(response.content)
             nested_length = self._add_nested_collection(collection, json_doc)
             if nested_length > 0:
-                self.validation_messages['DS'].append(
+                self.validation_messages['DB'].append(
                     create_new_message('text', '', '','{0} nested objects for {1} with id {2}'.format(nested_length, collection, json_doc['schema_identifier'])))
             lg.debug(json_doc)
 
@@ -187,11 +191,17 @@ class DataImport():
             lg.debug("Adding feature value to the import file = {0}".format(feature_value['value']))
             self.DataFromSource[feature_name] = (feature_value['value'])
 
-    def _process_collection(self, collection_name, collection_description, parent=None, dry_run=True, nested=False):
-        self.fp.reset_cols()
+    def _process_collection(self, collection_name, collection_description, nested=False):
+        if not nested:
+            self.fp.reset_cols()
+
         lg.debug("Processing data point: {0}".format(collection_name))
 
-        object_id_col = collection_description['schema_identifier']
+        object_id_col = ''
+        if nested:
+            object_id_col = collection_description['n_id']
+        else:
+            object_id_col = collection_description['schema_identifier']
 
         if (check_user_input(object_id_col)):
             self.validation_messages['DS'].append(
@@ -205,41 +215,38 @@ class DataImport():
                     is_mapping, mapping_word = check_mapping_input(pointer)
                     if (is_mapping):
                         lg.debug("Processing a mapping {}".format(pointer))
-                        self.fp.append_select_literals(literal=mapping_word, literal_alias=attribute)
+                        self.fp.append_select_literals(literal=mapping_word, literal_alias=attribute, nested=nested)
                     elif check_user_input(pointer) and (self.ListOfIds.setdefault(collection_name, {}).get(object_id_col) is None):
                         lg.debug("Processing an input {}".format(pointer))
                         self.validation_messages['DS'].append(
                             create_new_message('inputText', attribute, attribute, "Specify {0} column for collection {1}".format(attribute, collection_name))
                         )
                     else:
-                        self.fp.append_select_columns(column=pointer, column_alias=attribute)
+                        self.fp.append_select_columns(column=pointer, column_alias=attribute, nested=nested)
 
                 elif attribute == "additional_fields":
                     for field in pointer:
-                        self.fp.append_select_columns(column=field, column_alias=utils.urlify(field))
+                        self.fp.append_select_columns(column=field, column_alias=utils.urlify(field), nested=nested)
 
                 elif type(pointer) is dict:
                     if pointer['a'] == "nested_collection":
                         nested_collection_name = attribute
                         lg.debug("Processing a nested collection dict {}".format(attribute))
-                        join_key = pointer.pop('join_key', None)
-                        lg.debug("Grouping document by attribute {}".format(attribute))
-                        c,ca,l,la,a,aa, nested_name = self.fp.copy_processor_arrays()
-                        self.NestedCollections.setdefault(collection_name, {})[attribute] = utils.json_groupby_attribute(self._process_collection(attribute,pointer,collection_name), join_key)
+                        self._process_collection(attribute,pointer,collection_name)
                         lg.debug("Data source processed for collection {}".format(attribute))
-                        self.fp.set_processor_arrays(c,ca,l,la,a,aa)
-                        pointer['join_key'] =  join_key
+
                     elif pointer['a'] == "nested_array":
-                        self.fp.set_nested_array_name(attribute)
+                        self.fp.set_nested_array_name(attribute, nested)
                         lg.debug("Processing a nested array dict {}".format(attribute))
                         for k, v in pointer.items():
                             if k not in ["a", "additional_fields"]:
-                                self.fp.append_array_columns(array_column=v, array_column_alias=k)
+                                self.fp.append_array_columns(array_column=v, array_column_alias=k, nested=nested)
                             elif k == "additional_fields":
                                 for field in v:
-                                    self.fp.append_array_columns(array_column=field, array_column_alias=utils.urlify(field))
+                                    self.fp.append_array_columns(array_column=field, array_column_alias=utils.urlify(field), nested=nested)
 
-            return self.fp.process()
+            if not nested:
+                return self.fp.process()
 
     def _add_nested_collection(self, collection_name, json_document):
         nested_length = 0
