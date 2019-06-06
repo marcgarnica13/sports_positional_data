@@ -1,11 +1,15 @@
 import logging as lg
+import time
 
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
-from pyspark.sql import functions
+from pyspark.sql import functions, types
 
 from data_ingestion import utils
 from data_ingestion.file_processor.basic import Basic
+
+def epoch_to_datetime(x):
+    return time.localtime(x)
 
 
 class CSVProcessor(Basic):
@@ -15,12 +19,12 @@ class CSVProcessor(Basic):
         conf = SparkConf()
         conf.set('spark.logConf', 'true')
         self.spark = SparkSession.builder.config(conf=conf).getOrCreate()
-        self.spark.sparkContext.setLogLevel("ERROR")
+        self.spark.sparkContext.setLogLevel("OFF")
         self.df = self.spark.read.csv(
             file_path,
             header=header,
             sep=delimiter,
-            inferSchema=True)
+            inferSchema=True).cache()
         print("CSV Init")
 
 

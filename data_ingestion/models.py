@@ -3,6 +3,7 @@ import os
 import requests
 import json
 import time
+import pprint
 
 from data_ingestion import config
 from data_ingestion import utils
@@ -41,19 +42,26 @@ def new_file_processor(file_description, file_name):
 
 class DataImport():
 
-    def __init__(self, mapping, name, message, file_name):
+    def __init__(self, mapping, name, message, file_name, restore=False):
         lg.info("New data import: {0}-{1}-{2}-{3}".format(mapping, name, message, file_name))
         self.mapping_id = mapping
         self.author = name
         self.import_message = message
         self.data_file_name = file_name
         self.m = utils.get_document_by_id('mappings', self.mapping_id)
+
+        '''if restore:
+            self.BulkImport = utils.unpickle('bulk_import')
+            self.IndividualImport = utils.unpickle('individual_import')
+            self.MetaImport = utils.unpickle('metaimport')
+        '''
+
         lg.info("New data import initialized")
 
     def validate(self):
         lg.info("New import validation process")
         ds_validate = self._validate_datasource()
-        db_validate = True
+        db_validate = self._validate_database()
         return (ds_validate and db_validate), self.validation_messages
 
     def run(self):
@@ -111,15 +119,16 @@ class DataImport():
                 if data_definition['a'] == 'feature':
                     self._process_feature(data_key, data_definition)
                 elif data_definition['a'] == 'collection':
+                    start = time.time()
                     self.DataFromSource[data_key] = self._process_collection(data_key, data_definition)
-                    lg.debug("Data source processed for collection {}".format(data_key))
-                print(self.DataFromSource)
+                    lg.debug("Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
 
             self.validation_messages['DS'].append(
                 create_new_message('text', '', '', 'Data source validated in {} seconds'.format(time.time() - start)))
 
             print(self.DataFromSource)
             print(self.NestedCollections)
+
             return True
         else:
             return False
@@ -178,7 +187,7 @@ class DataImport():
             lg.debug("Adding feature value to the import file = {0}".format(feature_value['value']))
             self.DataFromSource[feature_name] = (feature_value['value'])
 
-    def _process_collection(self, collection_name, collection_description, dry_run=True, nested=False):
+    def _process_collection(self, collection_name, collection_description, parent=None, dry_run=True, nested=False):
         self.fp.reset_cols()
         lg.debug("Processing data point: {0}".format(collection_name))
 
@@ -216,7 +225,7 @@ class DataImport():
                         join_key = pointer.pop('join_key', None)
                         lg.debug("Grouping document by attribute {}".format(attribute))
                         c,ca,l,la,a,aa, nested_name = self.fp.copy_processor_arrays()
-                        self.NestedCollections.setdefault(collection_name, {})[attribute] = utils.json_groupby_attribute(self._process_collection(attribute,pointer), join_key)
+                        self.NestedCollections.setdefault(collection_name, {})[attribute] = utils.json_groupby_attribute(self._process_collection(attribute,pointer,collection_name), join_key)
                         lg.debug("Data source processed for collection {}".format(attribute))
                         self.fp.set_processor_arrays(c,ca,l,la,a,aa)
                         pointer['join_key'] =  join_key

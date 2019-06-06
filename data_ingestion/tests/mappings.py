@@ -60,7 +60,8 @@ kinexon_mapping = {
     'file': {
         'format': 'csv',
         'delimiter': ';',
-        'header': 'True'
+        'header': 'True',
+        'timestamp_format': ''
     },
     'data': {
         'source_name': {
@@ -138,6 +139,34 @@ dfl_mapping = {
             'description': 'Source unique identifier'
         },
 
+        'GameSections': {
+            'a': 'collection',
+            'schema_identifier': 'FrameSet/_GameSection',
+            'game_id': 'FrameSet/_MatchId',
+            'moments': {
+                'a': 'nested_collection',
+                'join_key': 'section_id',
+                'schema_identifier': 'FrameSet/Frame/_N',
+                'timestamp': 'FrameSet/Frame/_T',
+                'section_id': 'FrameSet/_GameSection',
+                'participants': {
+                    'a': 'nested_array',
+                    'id': 'FrameSet/_PersonId',
+                    'coord_x': 'FrameSet/Frame/_X',
+                    'coord_y': 'FrameSet/Frame/_Y',
+                    'coord_z': 'FrameSet/Frame/_Z',
+                    'additional_fields': [
+                        'FrameSet/Frame/_S', 'FrameSet/Frame/_M',
+                    ]
+                }
+            }
+        }
+
+    }
+}
+
+'''
+
         'Games': {
             'a': 'collection',
             'schema_identifier': 'Metadata._MatchId',
@@ -146,12 +175,14 @@ dfl_mapping = {
                 ]
         },
 
+        'Teams': {
+            'a': 'collection',
+            'schema_identifier': 'FrameSet/_TeamId',
+        },
+
         'Participants': {
             'a': 'collection',
             'schema_identifier': 'FrameSet/_PersonId',
             'team_id': 'FrameSet/_TeamId',
-        }
-
-    }
-}
+        },'''
 

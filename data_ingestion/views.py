@@ -50,7 +50,8 @@ def data_upload():
     newImport = DataImport(request.args['selected_mapping'],
                            request.args['full_name'],
                            request.args['message'],
-                           request.args['data_file_name'])
+                           request.args['data_file_name'],
+                           True)
     valid, messages = newImport.validate()
     if valid:
         report = newImport.run()

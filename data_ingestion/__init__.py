@@ -9,10 +9,15 @@ os.environ["PYSPARK_PYTHON"] = sys.executable
 os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
 os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages com.databricks:spark-xml_2.10:0.4.1 pyspark-shell'
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(BASE_DIR)
+
 from data_ingestion import utils, config
 
+s_logger = logging.getLogger('py4j.java_gateway')
+s_logger.setLevel(logging.ERROR)
 utils.check_folder('logs')
-logging.config.fileConfig('logging.ini')
+logging.config.fileConfig(os.path.join(BASE_DIR, 'data_ingestion', 'logging.ini'))
 logger = logging.getLogger()
 logger.info('############### CHECKPOINT')
 logger.info('Logger initialized by ./logging.ini file')
