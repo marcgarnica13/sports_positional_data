@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import json
+import pickle
 import logging as lg
 
 from werkzeug.utils import secure_filename
@@ -51,6 +52,20 @@ def save_temp_file(f):
     check_folder('temp')
     filename = secure_filename(f.filename)
     f.save(os.path.join('temp', filename))
+
+def dump_pickle_object(object_dict, file_name):
+    check_folder('temp')
+    lg.debug("Storing {} file as a pickle object serialization".format(file_name))
+    output = open(os.path.join('temp', file_name + '.pkl'), 'wb')
+    pickle.dump(object_dict, output)
+    output.close()
+
+def load_pickle_object(file_name):
+    lg.debug("Loading {}".format(file_name))
+    input = open(os.path.join('temp', file_name + '.pkl'), 'rb')
+    obj_dict = pickle.load(input)
+    input.close()
+    return obj_dict
 
 def load_temp_file(f):
     check_folder('temp')

@@ -113,6 +113,10 @@ kinexon_mapping = {
                         'metabolic power in W/kg', 'acceleration load'
                     ]
                 }
+            },
+            'partition' : {
+                'interval': '5m',
+                'ts_field': 'ts in ms'
             }
         }
     }
@@ -123,7 +127,8 @@ dfl_mapping = {
     # CSV, JSON, XML, AVRO, EXCEL, OWL
     'file': {
         'format':'xml',
-        'rowTag': 'Positions'
+        'rowTag': 'Positions',
+        'timestamp_format': "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
     },
     'data': {
         'source_name': {
@@ -176,6 +181,10 @@ dfl_mapping = {
                         'FrameSet/Frame/_S', 'FrameSet/Frame/_M',
                     ]
                 }
+            },
+            'partition' : {
+                'interval': '30m',
+                'ts_field': 'FrameSet/Frame/_T'
             }
         }
 

@@ -11,12 +11,16 @@ from data_ingestion import utils
 
 class XMLProcessor(Basic):
 
-    def __init__(self, file_path, rowtag):
+    def __init__(self, file_path, rowtag, time_format):
         super().__init__()
         self.exploded_columns = []
         self.exploded_columns_alias = []
+        self.time_format = time_format
         conf = SparkConf()
         conf.set('spark.logConf', 'true')
+        conf.set('spark.mongodb.input.uri', 'mongodb://localhost:27017/test')
+        conf.set('spark.mongodb.output.uri', 'mongodb://localhost:27017/test')
+        conf.set('spark.jars.packages', 'com.databricks:spark-xml_2.11:0.5.0,org.mongodb.spark:mongo-spark-connector_2.11:2.4.0')
         self.spark = SparkSession.builder.config(conf=conf).getOrCreate()
         self.spark.sparkContext.setLogLevel("OFF")
         self.df = self.spark.read.format('xml').\
@@ -37,6 +41,11 @@ class XMLProcessor(Basic):
             col_name, attribute = self._explode_dataframe_structure(array_column)
             super().append_array_columns("{}.{}".format(col_name, attribute), array_column_alias, nested)
 
+    def set_partition(self, interval, field):
+        processed_field, alias = self._explode_dataframe_structure(field)
+        print(processed_field, alias)
+        super().set_partition(interval, "{}.{}".format(processed_field, alias))
+
     def _explode_dataframe_structure(self, column):
         split = column.split('/')
         col_name = None
@@ -54,9 +63,16 @@ class XMLProcessor(Basic):
             if col_name not in self.exploded_columns:
                 lg.debug("Column {0} needs to be exploded with alias {1}".format(col_name, alias))
                 start = time.time()
-                self.df = self.df.select('*',
+                if '.' in col_name:
+                    column_split = col_name.split('.')
+                    self.df = self.df.select('*',
+                                         functions.explode(functions.col(col_name)).alias(alias))
+                    field_names = ["{}_temp.{}".format(column_split[0],s) for s in self.df.schema[column_split[0]].dataType.names if s not in [column_split[1]]]
+                    self.df = self.df.withColumnRenamed(column_split[0], column_split[0] + '_temp').\
+                        withColumn(column_split[0], functions.struct(field_names)).drop(column_split[0] + '_temp')
+                else:
+                    self.df = self.df.select('*',
                                          functions.explode(functions.col(col_name)).alias(alias)).drop(col_name)
-
                 lg.debug("{0} array explode done in {1} seconds".format(col_name, time.time() - start))
                 self.exploded_columns.append(col_name)
 
@@ -65,70 +81,7 @@ class XMLProcessor(Basic):
 
         return alias, split[-1]
 
-    def process(self):
-        self.df.cache()
-
-        if self.partition:
-            #self.df = self.df.withColumn('minute', functions.from_unixtime(functions.col('ts in ms'), "yyyy-MM-dd'T'HH:mm:ss.SSS").cast(types.DateType()))
-            minmax = self.df.agg(functions.min('ts in ms').alias('min'), functions.max('ts in ms').alias('max')).collect()
-            print(minmax[0])
-            interval = .5*60*1000
-            initial = minmax[0].min
-            print(self.df.count())
-
-            while initial < minmax[0].max:
-                lg.debug("{} interval output".format(initial))
-                filtered_df = self.df.filter(functions.col('ts in ms').between(initial, initial + interval - 1))
-                initial = initial + interval
-                lg.debug(self._run_queries(filtered_df))
-        else:
-            return self._run_queries(self.df)
-
-    '''
-    def process(self):
-        c, ca, l, la, a, aa, nested_name = self.get_processor_arrays()
-        ex = self.exploded_columns
-        exa = self.exploded_columns_alias
-
-        start = time.time()
-
-
-        if len(c) + len(l) != 0:
-            if len(a) == 0:
-                lg.debug(
-                    "Running select operation on pyspark dataframe with select attributes {0}, select literals {1}".format(
-                        c, l))
-                collection_data = self.df.select(
-                    [functions.col(c).alias(ca[i]) for i, c in enumerate(c)] + [
-                        functions.lit(m).alias(la[i]) for i, m in enumerate(l)]) \
-                    .distinct().toJSON().collect()
-                return collection_data
-            else:
-                lg.debug(
-                    "Running select operation on pyspark dataframe with select attributes {0} {1}, select literals {2} {3}, group by {0} {1}, aggregating fields {4} {5}".format(
-                        c, ca, l, la, a, aa))
-
-                collection_data = self.df.\
-                select(
-                        [functions.col(c).alias(ca[i]) for i, c in enumerate(c)] +
-                        [functions.lit(c).alias(la[i]) for i, c in enumerate(l)] +
-                        [functions.col(c).alias(aa[i]) for i, c in enumerate(a)] +
-                        [functions.col('_Frame._BallPossession').alias('BallPossession'), functions.col('_Frame._BallStatus').alias('BallStatus')]
-                    )\
-                .groupBy(
-                        [functions.col(c) for c in ca] +
-                        [functions.col(m) for m in la]
-                    )\
-                .agg(functions.sum('BallStatus').alias('BallStatus'), functions.sum('BallPossession').alias('BallPossession'), functions.collect_set(functions.array(*[c for c in (aa)])).alias(nested_name))\
-                    .toJSON().map(
-                    lambda row: utils.add_array_index(row, index_list=aa, array_name=nested_name)).collect()
-
-                print("SELECT + AGGREGATE + toJSON COLLECT: {} seconds".format(time.time() - start))
-
-                return collection_data
-    '''
-
-    def _run_queries(self, dataframe):
+    def _run_queries(self, dataframe, iteration=0):
         c, ca, nested_c, nested_ca, l, la, nested_l, nested_la, a, aa, nested_array_name, nested_a, nested_aa, nested_nested_array_name = self.copy_processor_arrays()
 
         if len(c) + len(l) + len(nested_c) + len(nested_l) != 0:
@@ -144,6 +97,7 @@ class XMLProcessor(Basic):
                 [functions.col(c).alias(aa[i]) for i, c in enumerate(a)] +
                 [functions.col(c).alias(nested_aa[i]) for i, c in enumerate(nested_a)]
             ).distinct()
+
             if len(nested_a) != 0:
                 data = data.groupBy(
                     [functions.col(c) for c in ca] +
@@ -178,14 +132,21 @@ class XMLProcessor(Basic):
                     )
 
             if len(a) != 0 and len(nested_a) != 0:
-                data = data.toJSON().\
-                    map(lambda row: utils.add_array_index(row, index_list=aa, array_name=nested_array_name)).\
-                    map(lambda row: utils.add_array_index(row, index_list=nested_aa, array_name=nested_nested_array_name))
+                data = data.withColumn(
+                    "{}_cols".format(nested_array_name), functions.array(*[functions.lit(c) for c in aa])
+                ).withColumn(
+                    "{}_cols".format(nested_nested_array_name), functions.array(*[functions.lit(c) for c in nested_aa])
+                )
             elif len(a) != 0:
-                data = data.toJSON(). \
-                    map(lambda row: utils.add_array_index(row, index_list=aa, array_name=nested_array_name))
+                data = data.withColumn(
+                    "{}_cols".format(nested_array_name), functions.array(*[functions.lit(c) for c in aa])
+                )
             elif len(nested_a) != 0:
-                data = data.toJSON(). \
-                    map(lambda row: utils.add_array_index(row, index_list=nested_aa, array_name=nested_nested_array_name))
+                data = data.withColumn(
+                    "{}_cols".format(nested_nested_array_name), functions.array(*[functions.lit(c) for c in nested_aa])
+                )
 
-            print(data.collect())
+            if self.partition:
+                data = data.withColumn('schema_identifier', functions.concat(functions.col('schema_identifier'), functions.lit("#{}{}_{}".format(self.time_interval, self.time_units, iteration))))
+
+            return data.toJSON().collect()

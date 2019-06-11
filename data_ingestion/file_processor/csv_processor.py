@@ -14,7 +14,7 @@ def epoch_to_datetime(x):
 
 class CSVProcessor(Basic):
 
-    def __init__(self, file_path, header, delimiter):
+    def __init__(self, file_path, header, delimiter, time_format):
         super().__init__()
         conf = SparkConf()
         conf.set('spark.logConf', 'true')
@@ -25,30 +25,12 @@ class CSVProcessor(Basic):
             header=header,
             sep=delimiter,
             inferSchema=True).cache()
+        self.time_format = time_format
         print("CSV Init")
 
 
-    def process(self):
 
-        if self.partition:
-            #self.df = self.df.withColumn('minute', functions.from_unixtime(functions.col('ts in ms'), "yyyy-MM-dd'T'HH:mm:ss.SSS").cast(types.DateType()))
-            minmax = self.df.agg(functions.min('ts in ms').alias('min'), functions.max('ts in ms').alias('max')).collect()
-            print(minmax[0])
-            interval = .5*60*1000
-            initial = minmax[0].min
-            print(self.df.count())
-
-            while initial < minmax[0].max:
-                lg.debug("{} interval output".format(initial))
-                filtered_df = self.df.filter(functions.col('ts in ms').between(initial, initial + interval - 1))
-                initial = initial + interval
-                lg.debug(self._run_queries(filtered_df))
-        else:
-            return self._run_queries(self.df)
-
-
-
-    def _run_queries(self, dataframe):
+    def _run_queries(self, dataframe, iteration=0):
         c, ca, nested_c, nested_ca, l, la, nested_l, nested_la, a, aa, nested_array_name, nested_a, nested_aa, nested_nested_array_name = self.copy_processor_arrays()
 
         if len(c) + len(l) + len(nested_c) + len(nested_l) != 0:
@@ -64,7 +46,6 @@ class CSVProcessor(Basic):
                 [functions.col(c).alias(aa[i]) for i, c in enumerate(a)] +
                 [functions.col(c).alias(nested_aa[i]) for i, c in enumerate(nested_a)]
             ).distinct()
-            data.show()
             if len(nested_a) != 0:
                 data = data.groupBy(
                     [functions.col(c) for c in ca] +
@@ -76,7 +57,6 @@ class CSVProcessor(Basic):
                         nested_nested_array_name)
                     )
 
-            data.show()
             if (len(a) != 0):
                 data = data.groupBy(
                     [functions.col(c) for c in ca] +
@@ -87,7 +67,6 @@ class CSVProcessor(Basic):
                     )
                 )
 
-            data.show()
             if len(nested_c) != 0:
                 if len(nested_a) != 0:
                     nested_ca.append(nested_nested_array_name)
@@ -100,14 +79,21 @@ class CSVProcessor(Basic):
                         'moments')
                     )
             if len(a) != 0 and len(nested_a) != 0:
-                data = data.toJSON().\
-                    map(lambda row: utils.add_array_index(row, index_list=aa, array_name=nested_array_name)).\
-                    map(lambda row: utils.add_array_index(row, index_list=nested_aa, array_name=nested_nested_array_name))
+                data = data.withColumn(
+                    "{}_cols".format(nested_array_name), functions.array(*[functions.lit(c) for c in aa])
+                ).withColumn(
+                    "{}_cols".format(nested_nested_array_name), functions.array(*[functions.lit(c) for c in nested_aa])
+                )
             elif len(a) != 0:
-                data = data.toJSON(). \
-                    map(lambda row: utils.add_array_index(row, index_list=aa, array_name=nested_array_name))
+                data = data.withColumn(
+                    "{}_cols".format(nested_array_name), functions.array(*[functions.lit(c) for c in aa])
+                )
             elif len(nested_a) != 0:
-                data = data.toJSON(). \
-                    map(lambda row: utils.add_array_index(row, index_list=nested_aa, array_name=nested_nested_array_name))
+                data = data.withColumn(
+                    "{}_cols".format(nested_nested_array_name), functions.array(*[functions.lit(c) for c in nested_aa])
+                )
 
-            print(data.collect())
+            if self.partition:
+                data = data.withColumn('schema_identifier', functions.concat(functions.col('schema_identifier'), functions.lit("__{}{}_{}".format(self.time_interval, self.time_units, iteration))))
+
+            return data.toJSON().collect()

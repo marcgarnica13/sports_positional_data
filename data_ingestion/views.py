@@ -52,9 +52,5 @@ def data_upload():
                            request.args['message'],
                            request.args['data_file_name'],
                            True)
-    valid, messages = newImport.validate()
-    if valid:
-        report = newImport.run()
-        return render_template("error.html", error=report)
-    else:
-        return render_template('error.html', error='Import is not correct')
+    report = newImport.run()
+    return render_template("error.html", error=report)

@@ -5,6 +5,8 @@ import json
 import time
 import pprint
 
+from pathlib import Path
+
 from data_ingestion import config
 from data_ingestion import utils
 from data_ingestion.file_processor import basic, csv_processor, json_processor, xml_processor
@@ -33,11 +35,14 @@ def new_file_processor(file_description, file_name):
         return csv_processor.CSVProcessor(
             file_path=os.path.join('temp', file_name),
             header=file_description['header'],
-            delimiter=file_description['delimiter'])
+            delimiter=file_description['delimiter'],
+            time_format=file_description['timestamp_format']
+        )
     elif file_description['format'] == 'xml':
         return xml_processor.XMLProcessor(
             file_path=os.path.join('temp', file_name),
-            rowtag=file_description['rowTag']
+            rowtag=file_description['rowTag'],
+            time_format=file_description['timestamp_format']
         )
 
 class DataImport():
@@ -62,9 +67,12 @@ class DataImport():
         lg.info("New import validation process")
         ds_validate = self._validate_datasource()
         db_validate = self._validate_database()
+        self._store_validation_results()
         return (ds_validate and db_validate), self.validation_messages
 
     def run(self):
+        self._load_import_files()
+        utils.delete_temp_folder()
         lg.info("Starting new import.")
         list_of_response = ""
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
@@ -91,7 +99,6 @@ class DataImport():
     def _validate_datasource(self):
         lg.info("Validation process: Data source")
         self.DataFromSource = {}
-        self.NestedCollections = {}
         self.BulkImport = {}
         self.IndividualImport = {}
         self.MetaImport = {}
@@ -122,11 +129,6 @@ class DataImport():
                     start = time.time()
                     self.DataFromSource[data_key] = self._process_collection(data_key, data_definition)
                     lg.debug("Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
-                elif data_definition['a'] == 'partitioned_collection':
-                    start = time.time()
-                    self.DataFromSource[data_key] = self._process_collection(data_key, data_definition, partition=True)
-                    lg.debug(
-                        "Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
 
             self.validation_messages['DS'].append(
                 create_new_message('text', '', '', 'Data source validated in {} seconds'.format(time.time() - start)))
@@ -165,11 +167,6 @@ class DataImport():
             api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, collection, json_doc['schema_identifier'])
             response = requests.get(api_url, headers=headers)
             jsonResponse = json.loads(response.content)
-            nested_length = self._add_nested_collection(collection, json_doc)
-            if nested_length > 0:
-                self.validation_messages['DB'].append(
-                    create_new_message('text', '', '','{0} nested objects for {1} with id {2}'.format(nested_length, collection, json_doc['schema_identifier'])))
-            lg.debug(json_doc)
 
             if (response.status_code != 200):
                 new_items += 1
@@ -228,6 +225,9 @@ class DataImport():
                     for field in pointer:
                         self.fp.append_select_columns(column=field, column_alias=utils.urlify(field), nested=nested)
 
+                elif attribute == "partition":
+                    self.fp.set_partition(pointer['interval'], pointer['ts_field'])
+
                 elif type(pointer) is dict:
                     if pointer['a'] == "nested_collection":
                         nested_collection_name = attribute
@@ -248,12 +248,14 @@ class DataImport():
             if not nested:
                 return self.fp.process()
 
-    def _add_nested_collection(self, collection_name, json_document):
-        nested_length = 0
+    def _store_validation_results(self):
+        temp_file_name = Path(self.data_file_name).stem
+        utils.dump_pickle_object(self.BulkImport, temp_file_name + "_bulk")
+        utils.dump_pickle_object(self.IndividualImport, temp_file_name + "_individual")
+        utils.dump_pickle_object(self.MetaImport, temp_file_name + "_meta")
 
-        for nested, nested_values in self.NestedCollections.get(collection_name, {}).items():
-            nested_json = json.loads(nested_values)
-            nested_length = len(nested_json[json_document['schema_identifier']])
-            json_document[nested] = nested_json[json_document['schema_identifier']]
-
-        return nested_length
+    def _load_import_files(self):
+        temp_file_name = Path(self.data_file_name).stem
+        self.BulkImport = utils.load_pickle_object(temp_file_name + "_bulk")
+        self.IndividualImport = utils.load_pickle_object(temp_file_name + "_individual")
+        self.MetaImport = utils.load_pickle_object(temp_file_name + "_meta")
