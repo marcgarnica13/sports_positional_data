@@ -12,7 +12,7 @@ from data_ingestion import utils, config
 
 class XMLProcessor(Basic):
 
-    def __init__(self, file_path, rowtag, time_format):
+    def __init__(self, file_path, rowtag, value_tag, time_format):
         super().__init__()
         self.exploded_columns = []
         self.exploded_columns_alias = []
@@ -21,7 +21,7 @@ class XMLProcessor(Basic):
         self.spark.sparkContext.setLogLevel("OFF")
         self.df = self.spark.read.format('xml').\
             options(rowtag=rowtag). \
-            options(valuetag="xml_value"). \
+            options(valuetag=value_tag). \
             load(file_path).cache()
         lg.debug(self.df.schema.json())
         self.metadata = utils.process_schema(json.loads(self.df.schema.json()))

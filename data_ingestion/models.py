@@ -41,6 +41,12 @@ def new_file_processor(file_description, file_name):
         return xml_processor.XMLProcessor(
             file_path=os.path.join('temp', file_name),
             rowtag=file_description['rowTag'],
+            value_tag=file_description['valueTag'],
+            time_format=file_description['timestamp_format']
+        )
+    elif file_description['format'] == 'json':
+        return json_processor.JSONProcessor(
+            file_path=os.path.join('temp', file_name),
             time_format=file_description['timestamp_format']
         )
 

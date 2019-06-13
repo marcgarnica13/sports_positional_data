@@ -2,7 +2,7 @@ default_mapping = {
     "name": "default_mapping",
     # CSV, JSON, XML, AVRO, EXCEL, OWL
     "file": {},
-    "data_point": {
+    "data": {
         "source_name": {
             "a": "feature",
             "value": "",

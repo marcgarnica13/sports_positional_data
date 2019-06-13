@@ -92,17 +92,26 @@ def get_default_mapping():
 
 def process_schema(schema_json, level=0):
     json_fields = []
-    for field in schema_json['fields']:
+    print(schema_json)
+    if schema_json['type'] == 'struct':
+        for field in schema_json['fields']:
+            new_field = {}
+            new_field['level'] = level
+            new_field['name'] = field['name']
+            if type(field['type']) is not dict:
+                new_field['type'] = field['type']
+                json_fields.append(new_field)
+            else:
+                new_field['type'] = field['type']['type']
+                json_fields.append(new_field)
+                json_fields = json_fields + process_schema(field['type'].get('elementType', field['type']), level + 1)
+    else:
         new_field = {}
         new_field['level'] = level
-        new_field['name'] = field['name']
-        if type(field['type']) is not dict:
-            new_field['type'] = field['type']
-            json_fields.append(new_field)
-        else:
-            new_field['type'] = field['type']['type']
-            json_fields.append(new_field)
-            json_fields = json_fields + process_schema(field['type'].get('elementType', field['type']), level + 1)
+        new_field['name'] = '_element'
+        new_field['type'] = "{}({})".format(schema_json['type'], schema_json['elementType'])
+        json_fields.append(new_field)
+
     return json_fields
 
 

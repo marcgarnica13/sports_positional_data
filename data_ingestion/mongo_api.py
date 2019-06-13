@@ -92,10 +92,8 @@ def import_new_document(collection_name, new_doc, document_key, overwrite=False)
     code, response_code, response_content = get_document(collection_name, key)
     if code == 0:
         if overwrite:
-            headers = utils.get_headers()
-            headers['If-Match'] = response_content['_etag']
-            database_id = response_content['_id']
-            code, response_code, response_content = patch_document(collection_name, new_doc, response_content['_etag'], response_content['_id'])
+            print(json.dumps(response_content))
+            code, response_code, response_content = patch_document(collection_name, json.dumps(new_doc), response_content['_etag'], response_content['_id'])
             if code != 0:
                 return 3, "Patch operation on {} with {} = {} failed.".format(collection_name, document_key, key), response_content
         else:
@@ -164,6 +162,7 @@ def patch_document(collection_name, json_doc, etag, database_id):
     """
     headers = utils.get_headers()
     headers['If-Match'] = etag
+    print(headers)
     response = requests.patch(_url("{}/{}".format(collection_name, database_id)), headers=headers, data=json_doc)
 
     if response.status_code == 200:
@@ -196,7 +195,7 @@ def post_document(collection_name, json_doc):
     """
     response = requests.post(_url("{}".format(collection_name)), headers=utils.get_headers(), data=json_doc)
 
-    if response.status_code == 200:
+    if response.status_code == 201:
         return 0, response.status_code, json.loads(response.content)
     else:
         return 1, response.status_code, json.loads(response.content)

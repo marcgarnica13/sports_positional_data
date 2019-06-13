@@ -45,9 +45,9 @@ def home():
                 form.mapping_file.errors = tuple(['You missed the new mapping json file!'])
             else:
                 new_mapping = json.load(request.files['mapping_file'])
-                result_code, result_message = mongo_api.import_new_document(config.MAPPINGS_COLLECTION_NAME, new_mapping, config.MAPPINGS_KEY, overwrite=True)
+                result_code, result_message, response_content = mongo_api.import_new_document(config.MAPPINGS_COLLECTION_NAME, new_mapping, config.MAPPINGS_KEY, overwrite=True)
                 if result_code != 0:
-                    return render_template("error.html", error=result_message)
+                    return render_template("error.html", error=result_message + json.dumps(response_content))
                 else:
                     return render_template("success.html", message="New mapping added correctly")
         elif case == 'download':
