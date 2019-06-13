@@ -63,6 +63,9 @@ class Basic():
         else:
             self.nested_array_name = array_name
 
+    def set_nested_collection_name(self, name):
+        self.nested_collection_name = name
+
     def append_array_columns(self, array_column, array_column_alias, nested):
         lg.debug("Adding array column {} with alias {}".format(array_column, array_column_alias))
         if nested:

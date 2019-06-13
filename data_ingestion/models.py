@@ -1,14 +1,13 @@
 import logging as lg
 import os
-import requests
 import json
 import time
 import pprint
 
+from jsonmerge import merge as jsmerge
 from pathlib import Path
 
-from data_ingestion import config
-from data_ingestion import utils
+from data_ingestion import config, utils, mongo_api
 from data_ingestion.file_processor import basic, csv_processor, json_processor, xml_processor
 
 def create_new_message(type, id, name, message):
@@ -47,52 +46,47 @@ def new_file_processor(file_description, file_name):
 
 class DataImport():
 
-    def __init__(self, mapping, name, message, file_name, restore=False):
-        lg.info("New data import: {0}-{1}-{2}-{3}".format(mapping, name, message, file_name))
+    def __init__(self, mapping, name, message, file_name):
         self.mapping_id = mapping
         self.author = name
         self.import_message = message
         self.data_file_name = file_name
-        self.m = utils.get_document_by_id('mappings', self.mapping_id)
-
-        '''if restore:
-            self.BulkImport = utils.unpickle('bulk_import')
-            self.IndividualImport = utils.unpickle('individual_import')
-            self.MetaImport = utils.unpickle('metaimport')
-        '''
-
-        lg.info("New data import initialized")
+        lg.info("New data import: {0}-{1}-{2}-{3}".format(mapping, name, message, file_name))
 
     def validate(self):
         lg.info("New import validation process")
+        code, response_code, response_content = mongo_api.get_document(collection_name='mappings', document_key=self.mapping_id, database_attributes=False)
+        if code != 0:
+            return False, "Error loading mapping", ""
+        else:
+            print(json.dumps(response_content))
+            self.m = response_content
+
         ds_validate = self._validate_datasource()
         db_validate = self._validate_database()
         self._store_validation_results()
-        return (ds_validate and db_validate), self.validation_messages
+        return (ds_validate and db_validate), self.validation_messages, self.fp.metadata
 
     def run(self):
         self._load_import_files()
         utils.delete_temp_folder()
         lg.info("Starting new import.")
         list_of_response = ""
-        headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
         for collection, json_doc_set in self.IndividualImport.items():
             for doc in json_doc_set:
                 lg.debug("Updating an already existing document in database.")
                 lg.debug("Collection: {0}, Schema identifier: {1}".format(collection, doc['schema_identifier']))
-                etag_headers = headers
-                etag_headers['If-Match'] = self.MetaImport[collection][doc['schema_identifier']]['etag']
-                api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, collection, self.MetaImport[collection][doc['schema_identifier']]['object_id'])
-                self.response = requests.patch(api_url, headers=etag_headers, data=json.dumps(doc))
-                list_of_response += str(self.response.status_code)
+                code, response_code, response_content = mongo_api.patch_document(collection_name=collection,
+                                         json_doc=json.dumps(doc),
+                                         etag=self.MetaImport[collection][doc['schema_identifier']]['etag'],
+                                         database_id=self.MetaImport[collection][doc['schema_identifier']]['object_id'])
+                list_of_response += str(response_code)
 
         for collection, json_doc_set in self.BulkImport.items():
             lg.debug('Creating new document in {} collection'.format(collection))
-            api_url = '{0}{1}'.format(config.MONGODB_API_URL, collection)
-            self.response = requests.post(api_url, headers=headers, data=json.dumps(json_doc_set))
-            lg.debug(self.response.content)
-            list_of_response += str(self.response.status_code)
+            code, response_code, response_content = mongo_api.post_document(collection_name=collection, json_doc=json.dumps(json_doc_set))
+            list_of_response += str(response_code)
 
         return list_of_response
 
@@ -164,17 +158,15 @@ class DataImport():
         for doc in doc_set:
             json_doc = json.loads(doc)
             json_doc['schema_identifier'] = str(json_doc['schema_identifier'])
-            api_url = '{0}{1}/{2}'.format(config.MONGODB_API_URL, collection, json_doc['schema_identifier'])
-            response = requests.get(api_url, headers=headers)
-            jsonResponse = json.loads(response.content)
-
-            if (response.status_code != 200):
+            code, response_code, json_content = mongo_api.get_document(collection_name=collection, document_key=json_doc['schema_identifier'])
+            if code != 0:
                 new_items += 1
                 self.BulkImport.setdefault(collection, []).append(json_doc)
             else:
-                self.IndividualImport.setdefault(collection, []).append(json_doc)
-                self.MetaImport.setdefault(collection, {}).setdefault(json_doc['schema_identifier'], {})['object_id'] = jsonResponse['_id']
-                self.MetaImport[collection][json_doc['schema_identifier']]['etag'] = jsonResponse['_etag']
+                self.IndividualImport.setdefault(collection, []).append(
+                    jsmerge({key:val for key, val in json_content.items() if key not in mongo_api.get_mongo_api_attributes()} , json_doc))
+                self.MetaImport.setdefault(collection, {}).setdefault(json_doc['schema_identifier'], {})['object_id'] = json_content['_id']
+                self.MetaImport[collection][json_doc['schema_identifier']]['etag'] = json_content['_etag']
                 update_items += 1
 
         return new_items, update_items
@@ -231,8 +223,9 @@ class DataImport():
                 elif type(pointer) is dict:
                     if pointer['a'] == "nested_collection":
                         nested_collection_name = attribute
+                        self.fp.set_nested_collection_name(nested_collection_name)
                         lg.debug("Processing a nested collection dict {}".format(attribute))
-                        self._process_collection(attribute,pointer,collection_name)
+                        self._process_collection(attribute,pointer,True)
                         lg.debug("Data source processed for collection {}".format(attribute))
 
                     elif pointer['a'] == "nested_array":

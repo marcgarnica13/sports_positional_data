@@ -1,12 +1,13 @@
 import logging as lg
 import time
+import json
 
 from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext, SparkSession
 from pyspark.sql import functions
 
 from data_ingestion.file_processor.basic import Basic
-from data_ingestion import utils
+from data_ingestion import utils, config
 
 
 class XMLProcessor(Basic):
@@ -16,16 +17,15 @@ class XMLProcessor(Basic):
         self.exploded_columns = []
         self.exploded_columns_alias = []
         self.time_format = time_format
-        conf = SparkConf()
-        conf.set('spark.logConf', 'true')
-        conf.set('spark.mongodb.input.uri', 'mongodb://localhost:27017/test')
-        conf.set('spark.mongodb.output.uri', 'mongodb://localhost:27017/test')
-        conf.set('spark.jars.packages', 'com.databricks:spark-xml_2.11:0.5.0,org.mongodb.spark:mongo-spark-connector_2.11:2.4.0')
-        self.spark = SparkSession.builder.config(conf=conf).getOrCreate()
+        self.spark = SparkSession.builder.config(conf=config.SPARK_CONF).getOrCreate()
         self.spark.sparkContext.setLogLevel("OFF")
         self.df = self.spark.read.format('xml').\
-            options(rowtag=rowtag).\
+            options(rowtag=rowtag). \
+            options(valuetag="xml_value"). \
             load(file_path).cache()
+        lg.debug(self.df.schema.json())
+        self.metadata = utils.process_schema(json.loads(self.df.schema.json()))
+        lg.debug(json.dumps(self.metadata))
 
     def append_select_columns(self, column, column_alias, nested):
         if '/' not in column:
@@ -128,7 +128,7 @@ class XMLProcessor(Basic):
                     [functions.col(m) for m in la]
                 ).agg(
                     functions.collect_list(functions.struct(*([c for c in (nested_ca)]))).alias(
-                        'moments')
+                        self.nested_collection_name)
                     )
 
             if len(a) != 0 and len(nested_a) != 0:

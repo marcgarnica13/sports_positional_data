@@ -23,22 +23,11 @@ def check_folder(dir_path, create=True):
 
 def _url(path):
     return config.MONGODB_API_URL + path
-'''
-def get_mappings_collection():
-    mappings_list = []
-    r = requests.get(_url('/mappings'))
-    if r.status_code == requests.codes.ok:
-        r_dict = r.json()
-        for item in r_dict['_items']:
-            new_mapping = {}
-            new_mapping['id'] = item['_id']
-            new_mapping['name'] = item['name']
-            mappings_list.append(new_mapping)
-    return mappings_list
-'''
+
 
 def get_mappings_collection():
     mappings_list = [('0', 'firstMapping'), ('1', 'secondMapping')]
+
     return mappings_list
 
 def get_document_by_id(collection_name, mapping_number):
@@ -94,4 +83,27 @@ def add_array_index(row, index_list, array_name):
     json_row = json.loads(row)
     json_row["{}_cols".format(array_name)] = index_list
     return json.dumps(json_row)
+
+def get_headers():
+    return {'Content-Type': 'application/json', 'Accept': 'application/json'}
+
+def get_default_mapping():
+    return mappings.default_mapping
+
+def process_schema(schema_json, level=0):
+    json_fields = []
+    for field in schema_json['fields']:
+        new_field = {}
+        new_field['level'] = level
+        new_field['name'] = field['name']
+        if type(field['type']) is not dict:
+            new_field['type'] = field['type']
+            json_fields.append(new_field)
+        else:
+            new_field['type'] = field['type']['type']
+            json_fields.append(new_field)
+            json_fields = json_fields + process_schema(field['type'].get('elementType', field['type']), level + 1)
+    return json_fields
+
+
 

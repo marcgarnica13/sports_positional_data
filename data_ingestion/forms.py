@@ -10,3 +10,4 @@ class UploadForm(FlaskForm):
     message = StringField('message', [DataRequired(message='Shortly describe the data you are importing')])
     selected_mapping = SelectField('selected_mapping', coerce=str, validators=[DataRequired(message="Select the mapping schema")])
     data_file = FileField('data_file', [FileRequired(message='You missed the data file!')])
+    mapping_file = FileField('mapping_file')

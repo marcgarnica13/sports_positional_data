@@ -22,6 +22,15 @@ class="form-horizontal" method="post" enctype="multipart/form-data" role="form">
             </ul>
         </div>
         <div class="card-body">
+            <h3 class="card-title" style="margin-left: 10px">Data source schema</h3>
+            {%  for m in metadata %}
+            <div class="row" style="margin-left: 10%">
+                |<span style="width: {{(m['level']*5)**2}}px"></span>|---->
+                 {{ m['name'] }} : {{ m['type'] }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="card-body">
             <h3 class="card-title" style="margin-left: 10px">Database import</h3>
             <ul class="list-group">
             {% for m in messages['DB'] %}

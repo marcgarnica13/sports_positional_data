@@ -1,11 +1,12 @@
 import logging as lg
 import time
+import json
 
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql import functions, types
 
-from data_ingestion import utils
+from data_ingestion import utils, config
 from data_ingestion.file_processor.basic import Basic
 
 def epoch_to_datetime(x):
@@ -16,9 +17,7 @@ class CSVProcessor(Basic):
 
     def __init__(self, file_path, header, delimiter, time_format):
         super().__init__()
-        conf = SparkConf()
-        conf.set('spark.logConf', 'true')
-        self.spark = SparkSession.builder.config(conf=conf).getOrCreate()
+        self.spark = SparkSession.builder.config(conf=config.SPARK_CONF).getOrCreate()
         self.spark.sparkContext.setLogLevel("OFF")
         self.df = self.spark.read.csv(
             file_path,
@@ -26,8 +25,8 @@ class CSVProcessor(Basic):
             sep=delimiter,
             inferSchema=True).cache()
         self.time_format = time_format
-        print("CSV Init")
-
+        self.metadata = utils.process_schema(json.loads(self.df.schema.json()))
+        lg.debug("CSV Metadata: {}".format(self.metadata))
 
 
     def _run_queries(self, dataframe, iteration=0):
@@ -76,7 +75,7 @@ class CSVProcessor(Basic):
                     [functions.col(m) for m in la]
                 ).agg(
                     functions.collect_list(functions.struct(*([c for c in (nested_ca)]))).alias(
-                        'moments')
+                        self.nested_collection_name)
                     )
             if len(a) != 0 and len(nested_a) != 0:
                 data = data.withColumn(

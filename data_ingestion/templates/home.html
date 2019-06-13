@@ -1,7 +1,7 @@
 {% extends "base.html"%}
 {% block content %}
 <!-- Complete card -->
-<form action="/" method="post" enctype="multipart/form-data" role="form">
+<form id="form" action="/" method="post" enctype="multipart/form-data" role="form">
   {{ form.csrf_token() }}
   <!-- Identification -->
 
@@ -29,9 +29,9 @@
                       <div class="row">
                         <div class="form-group col-md-8">
                             <select class="custom-select form-control" id="selected_mapping" name="selected_mapping" value=" {{ form.selected_mapping.data }}">
-                              <option>Select mapping</option>
+                              <option value="-1">Select mapping</option>
                                 {% for m in form.selected_mapping.choices %}
-                              <option value="{{ m[0] }}" {% if m[0] == form.selected_mapping.data %}selected="selected"{% endif %}>{{ m[1] }}</option>
+                              <option value="{{ m[0] }}" {% if m._id == form.selected_mapping.data %} selected="selected"{% endif %}>{{ m[1] }}</option>
                               {% endfor %}
                             </select>
                             <ul class="alert-danger">
@@ -41,12 +41,18 @@
                           </ul>
                         </div>
                         <div class="col-md-4">
-                          <button type="button" class="btn btn-primary btn-block">Download</button>
+                          <button type="submit" name="button" value="download" class="btn btn-primary btn-block noEnterSubmit">Download</button>
                         </div>
-
                       </div>
-                        <div>
-                            <button type="button" class="btn btn-warning btn-block">Import new mapping</button>
+                        <div class="form-group custom-file">
+                          <label for="mapping_file" class="custom-file-label">Import new mapping </label>
+                          <input type="file" class='custom-file-input form-control' id="mapping_file" name="mapping_file" accept=".json">
+                          <button type="submit" name="button" value="mapping_import" class="btn btn-warning btn-block noEnterSubmit">Import</button>
+                            <ul class="alert-danger">
+                            {% for error in form.mapping_file.errors %}
+                                {{ error }}
+                            {% endfor %}
+                            </ul>
                         </div>
                   </div>
           </div>
@@ -76,7 +82,7 @@
       </div>
     </div>
   <div class="row" style="margin-top: 1em;">
-      <button id=upload_data type="submit" class="btn btn-default btn-lg btn-block">Upload data</button>
+      <button id=upload_data type="submit" name='button' form="form" value="data_import" class="btn btn-default btn-lg btn-block">Upload data</button>
   </div>
 </form>
 {% endblock %}

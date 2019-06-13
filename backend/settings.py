@@ -1,6 +1,17 @@
-schema_lookup = {
+schema_lookup_domain = {
         'url': 'regex("[\w]+")',
         'field': 'schema_identifier'
+}
+
+schema_lookup_mappings = {
+    'url': 'regex("[\w]+")',
+    'field': 'name'
+}
+
+basic_schema_mappings = {
+    'name': {
+        'type': 'string'
+    }
 }
 
 basic_schema = {
@@ -11,41 +22,36 @@ basic_schema = {
 
 mappings = {
     'item_title': 'Mapping',
-    'allow_unknown': True
+    'allow_unknown': True,
+    'additional_lookup': schema_lookup_mappings,
+    'schema': basic_schema_mappings
 }
 
 teams = {
     'item_title': 'Team',
     'allow_unknown': True,
-    'additional_lookup' : schema_lookup,
+    'additional_lookup' : schema_lookup_domain,
     'schema': basic_schema
 }
 
 participants = {
     'item_title': 'Participant',
     'allow_unknown': True,
-    'additional_lookup' : schema_lookup,
+    'additional_lookup' : schema_lookup_domain,
     'schema': basic_schema
 }
 
 games = {
     'item_title': 'Game',
     'allow_unknown': True,
-    'additional_lookup' : schema_lookup,
+    'additional_lookup' : schema_lookup_domain,
     'schema': basic_schema
 }
 
 gameSections = {
     'item_title': 'Game section',
     'allow_unknown': True,
-    'additional_lookup' : schema_lookup,
-    'schema': basic_schema
-}
-
-moments = {
-    'item_title': 'Moment',
-    'allow_unknown': True,
-    'additional_lookup' : schema_lookup,
+    'additional_lookup' : schema_lookup_domain,
     'schema': basic_schema
 }
 
