@@ -162,6 +162,7 @@ class DataImport():
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
         for doc in doc_set:
+            print(doc)
             json_doc = json.loads(doc)
             json_doc['schema_identifier'] = str(json_doc['schema_identifier'])
             code, response_code, json_content = mongo_api.get_document(collection_name=collection, document_key=json_doc['schema_identifier'])

@@ -74,19 +74,20 @@ class NestedProcessor(Basic):
         return alias, split[-1]
 
     def _run_queries(self, dataframe, iteration=0):
+        dataframe.printSchema()
         c, ca, nested_c, nested_ca, l, la, nested_l, nested_la, a, aa, nested_array_name, nested_a, nested_aa, nested_nested_array_name = self.copy_processor_arrays()
         if len(c) + len(l) + len(nested_c) + len(nested_l) != 0:
             lg.debug(
-                "Running select operation on pyspark dataframe with select attributes {0}, select literals {1}".format(
-                    c, l))
+                "Running select operation on pyspark dataframe with select attributes {0}, select literals {1}, array columns {2}, nested select attributes {3}, nested select literals {4}, nested array columns {5}".format(
+                    c, l, a, nested_c, nested_l, nested_a))
 
             data = dataframe.select(
-                [functions.col(c).alias(ca[i]) for i, c in enumerate(c)] +
+                self._select_att_array(c,ca) +
                 [functions.lit(m).alias(la[i]) for i, m in enumerate(l)] +
-                [functions.col(c).alias(nested_ca[i]) for i, c in enumerate(nested_c)] +
+                self._select_att_array(nested_c, nested_ca) +
                 [functions.lit(m).alias(nested_la[i]) for i, m in enumerate(nested_l)] +
-                [functions.col(c).alias(aa[i]) for i, c in enumerate(a)] +
-                [functions.col(c).alias(nested_aa[i]) for i, c in enumerate(nested_a)]
+                self._select_att_array(a, aa) +
+                self._select_att_array(nested_a, nested_aa)
             ).distinct()
 
             if len(nested_a) != 0:
@@ -141,3 +142,18 @@ class NestedProcessor(Basic):
                 data = data.withColumn('schema_identifier', functions.concat(functions.col('schema_identifier'), functions.lit("#{}{}_{}".format(self.time_interval, self.time_units, iteration))))
 
             return data.toJSON().collect()
+
+    def _select_att_array(self, attr_list, alias_list):
+        select_array = []
+        for index, attribute in enumerate(attr_list):
+            if '.' in attribute:
+                struct_field = attribute.split('.')[1]
+                if '[' in struct_field:
+                    index_number = int(struct_field[1:-1])
+                    select_array.append(functions.col(attribute.split('.')[0]).getItem(index_number).alias(alias_list[index]))
+                else:
+                    select_array.append(functions.col(attribute).alias(alias_list[index]))
+            else:
+                select_array.append(functions.col(attribute).alias(alias_list[index]))
+
+        return select_array

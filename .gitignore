@@ -176,3 +176,5 @@ fabric.properties
 /data_ingestion/logs
 /data_ingestion/__pycache__
 /data_ingestion/tests/__pycache__
+/data_ingestion/tests/logs
+/data_ingestion/tests/temp
