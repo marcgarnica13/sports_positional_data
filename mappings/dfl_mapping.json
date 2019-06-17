@@ -1,0 +1,67 @@
+{
+    "name": "dfl_mapping",
+    "file": {
+        "format":"xml",
+        "rowTag": "Positions",
+        "valueTag": "_xml_value",
+        "timestamp_format": "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+    },
+    "data": {
+        "source_name": {
+            "a": "feature",
+            "value": "dshs#input",
+            "description": "Source name"
+        },
+
+        "source_identifier": {
+            "a": "feature",
+            "value": "dshs#input",
+            "description": "Source unique identifier"
+        },
+
+        "Games": {
+            "a": "collection",
+            "schema_identifier": "Metadata._MatchId",
+            "additional_fields": [
+                "Metadata.PitchSize._X", "Metadata.PitchSize._Y"
+                ]
+        },
+
+        "Teams": {
+            "a": "collection",
+            "schema_identifier": "FrameSet/_TeamId"
+        },
+
+        "Participants": {
+            "a": "collection",
+            "schema_identifier": "FrameSet/_PersonId",
+            "team_id": "FrameSet/_TeamId"
+        },
+
+        "GameSections": {
+            "a": "collection",
+            "schema_identifier": "FrameSet/_GameSection",
+            "game_id": "FrameSet/_MatchId",
+            "moments": {
+                "a": "nested_collection",
+                "n_id": "FrameSet/Frame/_N",
+                "timestamp": "FrameSet/Frame/_T",
+                "section_id": "FrameSet/_GameSection",
+                "participants": {
+                    "a": "nested_array",
+                    "a_id": "FrameSet/_PersonId",
+                    "coord_x": "FrameSet/Frame/_X",
+                    "coord_y": "FrameSet/Frame/_Y",
+                    "coord_z": "FrameSet/Frame/_Z",
+                    "additional_fields": [
+                        "FrameSet/Frame/_S", "FrameSet/Frame/_M"
+                    ]
+                }
+            },
+            "partition" : {
+                "interval": "30m",
+                "ts_field": "FrameSet/Frame/_T"
+            }
+        }
+    }
+}
