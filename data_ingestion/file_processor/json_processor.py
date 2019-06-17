@@ -6,12 +6,13 @@ from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext, SparkSession
 from pyspark.sql import functions
 
-from data_ingestion.file_processor.basic import Basic
+from data_ingestion.file_processor.nested_processor import NestedProcessor
 from data_ingestion import utils, config
 
-class JSONProcessor(Basic):
+class JSONProcessor(NestedProcessor):
 
     def __init__(self, file_path, time_format):
+        start = time.time()
         super().__init__()
         self.exploded_columns = []
         self.exploded_columns_alias = []
@@ -22,4 +23,4 @@ class JSONProcessor(Basic):
         lg.debug(self.df.schema.json())
         self.metadata = utils.process_schema(json.loads(self.df.schema.json()))
         lg.debug(json.dumps(self.metadata))
-        self.df.printSchema()
+        lg.debug("JSON init function executed in {} seconds".format(time.time() - start))
