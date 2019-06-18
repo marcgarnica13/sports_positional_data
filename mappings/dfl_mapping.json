@@ -7,38 +7,44 @@
         "timestamp_format": "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
     },
     "data": {
-        "source_name": {
+        "source_name": [
+          {
             "a": "feature",
             "value": "dshs#input",
             "description": "Source name"
-        },
-
-        "source_identifier": {
+          }
+        ],
+        "source_identifier": [
+          {
             "a": "feature",
             "value": "dshs#input",
             "description": "Source unique identifier"
-        },
-
-        "Games": {
+          }
+        ],
+        "Games": [
+          {
             "a": "collection",
             "schema_identifier": "Metadata._MatchId",
             "additional_fields": [
                 "Metadata.PitchSize._X", "Metadata.PitchSize._Y"
                 ]
-        },
-
-        "Teams": {
+          }
+        ],
+        "Teams": [
+          {
             "a": "collection",
             "schema_identifier": "FrameSet/_TeamId"
-        },
-
-        "Participants": {
+          }
+        ],
+        "Participants": [
+          {
             "a": "collection",
             "schema_identifier": "FrameSet/_PersonId",
             "team_id": "FrameSet/_TeamId"
-        },
-
-        "GameSections": {
+          }
+        ],
+        "GameSections": [
+          {
             "a": "collection",
             "schema_identifier": "FrameSet/_GameSection",
             "game_id": "FrameSet/_MatchId",
@@ -62,6 +68,7 @@
                 "interval": "30m",
                 "ts_field": "FrameSet/Frame/_T"
             }
-        }
+          }
+        ]
     }
 }

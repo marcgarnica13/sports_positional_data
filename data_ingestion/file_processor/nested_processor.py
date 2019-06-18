@@ -142,18 +142,3 @@ class NestedProcessor(Basic):
                 data = data.withColumn('schema_identifier', functions.concat(functions.col('schema_identifier'), functions.lit("#{}{}_{}".format(self.time_interval, self.time_units, iteration))))
 
             return data.toJSON().collect()
-
-    def _select_att_array(self, attr_list, alias_list):
-        select_array = []
-        for index, attribute in enumerate(attr_list):
-            if '.' in attribute:
-                struct_field = attribute.split('.')[1]
-                if '[' in struct_field:
-                    index_number = int(struct_field[1:-1])
-                    select_array.append(functions.col(attribute.split('.')[0]).getItem(index_number).alias(alias_list[index]))
-                else:
-                    select_array.append(functions.col(attribute).alias(alias_list[index]))
-            else:
-                select_array.append(functions.col(attribute).alias(alias_list[index]))
-
-        return select_array

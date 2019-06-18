@@ -122,13 +122,15 @@ class DataImport():
             #self.fileProcessor = utils.new_file_processor(self.m['file']['format'])
             self.fp = new_file_processor(self.m['file'], self.data_file_name)
 
-            for data_key, data_definition in self.m['data'].items():
-                if data_definition['a'] == 'feature':
-                    self._process_feature(data_key, data_definition)
-                elif data_definition['a'] == 'collection':
-                    start = time.time()
-                    self.DataFromSource[data_key] = self._process_collection(data_key, data_definition)
-                    lg.debug("Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
+            for data_key, data_value in self.m['data'].items():
+                for data_definition in data_value:
+                    if data_definition['a'] == 'feature':
+                        self._process_feature(data_key, data_definition)
+                    elif data_definition['a'] == 'collection':
+                        start = time.time()
+                        self.DataFromSource.setdefault(data_key, []).extend(self._process_collection(data_key, data_definition))
+                        print(self.DataFromSource)
+                        lg.debug("Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
 
             self.validation_messages['DS'].append(
                 create_new_message('text', '', '', 'Data source validated in {} seconds'.format(time.time() - start)))

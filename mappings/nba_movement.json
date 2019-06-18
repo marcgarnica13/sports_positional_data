@@ -1,17 +1,30 @@
 {
   "data": {
-    "Games": {
+    "Games": [
+      {
       "a": "collection",
       "schema_identifier": "gameid",
-      "game_date": "gamedate"
-    },
-    "Teams": {
+      "game_date": "gamedate",
+      "home_team_id": "events/home.teamid",
+      "visitor_team_id": "events/visitor.teamid"
+      }
+    ],
+    "Teams": [
+      {
         "a": "collection",
         "schema_identifier": "events/home.teamid",
         "name": "events/home.name",
         "name_abbreviation": "events/home.abbreviation"
-    },
-    "Participants": {
+      },
+      {
+        "a": "collection",
+        "schema_identifier": "events/visitor.teamid",
+        "name": "events/visitor.name",
+        "name_abbreviation": "events/visitor.abbreviation"
+      }
+    ],
+    "Participants": [
+      {
         "a": "collection",
         "schema_identifier": "events/home.players/playerid",
         "team_id": "events/home.teamid",
@@ -19,26 +32,41 @@
         "firstname": "events/home.players/firstname",
         "lastname": "events/home.players/lastname",
         "position": "events/home.players/position"
-    },
-    "GameSections": {
-      "a": "collection",
-      "schema_identifier": "events/moments/[0]",
-      "game_id": "gameid",
-      "moments": {
-        "a": "nested_collection",
-        "n_id": "events/eventId",
-        "section_id": "events/moments/[0]",
-        "timestamp": "events/moments/[1]",
-        "quarter_timestamp": "events/moments/[2]",
-        "shot_clock": "events/moments/[3]",
-        "participants": "events/moments/[5]"
+      },
+      {
+        "a": "collection",
+        "schema_identifier": "events/visitor.players/playerid",
+        "team_id": "events/visitor.teamid",
+        "shirt_number": "events/visitor.players/jersey",
+        "firstname": "events/visitor.players/firstname",
+        "lastname": "events/visitor.players/lastname",
+        "position": "events/visitor.players/position"
+      }
+    ],
+    "GameSections": [
+      {
+        "a": "collection",
+        "schema_identifier": "events/moments/[0]",
+        "game_id": "gameid",
+        "moments": {
+          "a": "nested_collection",
+          "n_id": "events/eventId",
+          "section_id": "events/moments/[0]",
+          "timestamp": "events/moments/[1]",
+          "quarter_timestamp": "events/moments/[2]",
+          "shot_clock": "events/moments/[3]",
+          "participants": "events/moments/[5]"
+        },
+        "partition" : {
+            "interval": "5m",
+            "ts_field": "events/moments/[1]"
         }
-    }
+      }
+    ]
   },
   "file": {
     "format":"json",
     "timestamp_format": "ms"
-
   },
   "name": "nba_movement_mapping"
 }

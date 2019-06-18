@@ -1,3 +1,6 @@
+"""
+
+"""
 import requests
 import json
 import time
@@ -6,31 +9,31 @@ import logging as lg
 from data_ingestion import config, utils
 
 def _url(path):
-    """ Helper: MongoDB API URL builder
-    -----------------------------------
-    Parameters
-    ----------
-    path : str
-        Collection and document specific path. Ex: mappings/1 or Games/9
-    Returns
-    -------
-    _ : str
-        Complete and function API URL for MongoDB REST API.
+    """
+    Helper: MongoDB API URL builder
+
+    Args:
+        path: str
+            Collection and document specific path. Ex: mappings/1 or Games/9
+
+    Returns:
+        _ : str
+            Complete and functional API url FOR MongoDB REST API
+
     """
     return config.MONGODB_API_URL + path
 
-def get_collection(collection_name):
-    """ Get collection from MongoDB API
-    -----------------------------------
-    Parameters
-    ----------
-    collection_name : str
-        Name of the collection
+def get_collection(collection_name, all_collection=True):
+    """
+    Get collection from MongoDB API
 
-    Returns
-    -------
-    collection_list : list(JSON)
-        List of JSON document in the MongoDB collection
+    Args:
+        collection_name: str
+            Name of the collection
+
+    Returns:
+        collection_list: list(JSON)
+            List of JSON documents queried from the MongoDb collection
     """
     collection_list = []
     r = requests.get(_url("{}".format(collection_name)))
@@ -48,9 +51,20 @@ def get_collection(collection_name):
                 r = requests.get(_url("/{}?page={}".format(collection_name, page)))
             else:
                 finished = True
+        elif not all_collection:
+            finished = True
+        else:
+            pass
     return collection_list
 
 def get_mongo_api_attributes():
+    """
+
+    Returns:
+        _ : list(str)
+            List of MongoDB API additional attributes
+
+    """
     """ Helper: providing the MongoDB API additional attributes
     ----------------------------------------------------------
     Parameters
@@ -63,29 +77,27 @@ def get_mongo_api_attributes():
     return ['_id', '_created', '_updated', '_links', '_etag']
 
 def import_new_document(collection_name, new_doc, document_key, overwrite=False):
-    """ Import new document into MongoDb. If the document already exists either
-    overwrite it with PATHCH or pass
-    ---------------------------------------------------------------------------
-    Parameters
-    ----------
-    collection_name : str
-        Name of the collection
-    new_doc : JSON object
-        Document JSON object
-    document_key : str
-        Domain primary key attribute of the document
-    overwrite : Bool[False]
-        Boolean indicating whether the function must patch the document if already
-        existing or not.
+    """
+    Import new document into MongoDB
 
-    Returns
-    -------
-    _ : int
-        Internal status code -> 0: success | 1: failure
-    _ : str
-        Custom message with the result of the import
-    _ : JSON Object
-        JSON object with the content of the HTML final request response
+    Args:
+        collection_name: str
+            Name of the collection
+        new_doc: JSON object
+            Document to import
+        document_key: str
+            Domain primary key attribute of the document
+        overwrite:  boolean(False)
+            If TRUE, overwrite already existing content
+
+    Returns:
+        _: int
+            Result code 0-success 1-failure
+        _: str
+            Result message
+        _: JSON Object
+            Extra result content in a JSON format
+
     """
     key = new_doc[document_key]
     start = time.time()
@@ -117,25 +129,24 @@ def import_new_document(collection_name, new_doc, document_key, overwrite=False)
     return 0, "", response_content
 
 def get_document(collection_name, document_key, database_attributes=True):
-    """ Get document from MongoDB
-    ----------------------------------------
-    Parameters
-    ----------
-    collection_name : str
-        Name of the collection
-    document_key : str
-        Domain primary key attribute of the document
-    database_attributes : Bool[True]
-        Boolean indicating wether to include database specific attributes into the document
+    """
 
-    Returns
-    -------
-    _ : int
-        Internal status code -> 0: success | 1: failure
-    _ : int
-        HTML requests REST status code
-    _ : JSON Object
-        JSON object with the content of the HTML request response
+    Args:
+        collection_name: str
+            Name of the collction
+        document_key: str
+            Domain primary key attribute of the document
+        database_attributes: boolean(True)
+            Include database specific attribute in the retrieving document
+
+    Returns:
+        _: int
+            Result code 0-success 1-failure
+        _: str
+            Result message
+        _: JSON Object
+            Extra result content in a JSON format
+
     """
     response = requests.get(_url("{}/{}".format(collection_name, document_key)), headers=utils.get_headers())
     if response.status_code == 200:
@@ -147,27 +158,24 @@ def get_document(collection_name, document_key, database_attributes=True):
         return 1, response.status_code, json.loads(response.content)
 
 def patch_document(collection_name, json_doc, etag, database_id):
-    """ Patch document into MongoDB database
-    ----------------------------------------
-    Parameters
-    ----------
-    collection_name : str
-        Name of the collection
-    json_doc : JSON object
-        Document JSON object
-    etag:
-        Hash function tag for database operations concurreny
-    database_id
-        Object _id of the existing document to patch
+    """
+    Args:
+        collection_name: str
+            Name of the collection
+        json_doc: JSON object
+            Document
+        etag: long
+            Hash_function tag for concurrency management
+        database_id:
+            Database id
 
-    Returns
-    -------
-    _ : int
-        Internal status code -> 0: success | 1: failure
-    _ : int
-        HTML requests REST status code
-    _ : JSON Object
-        JSON object with the content of the HTML request response
+    Returns:
+        _: int
+            Result code 0-success 1-failure
+        _: str
+            Result message
+        _: JSON Object
+            Extra result content in a JSON format
     """
     headers = utils.get_headers()
     headers['If-Match'] = etag
@@ -180,22 +188,26 @@ def patch_document(collection_name, json_doc, etag, database_id):
         return 1, response.status_code, json.loads(response.content)
 
 def post_document(collection_name, json_doc):
-    """ Post document into MongoDB database
-    ----------------------------------------
-    Parameters
-    ----------
-    collection_name : str
-        Name of the collection
-    json_doc : JSON object
-        Document JSON object
-    Returns
-    -------
-    _ : int
-        Internal status code -> 0: success | 1: failure
-    _ : int
-        HTML requests REST status code
-    _ : JSON Object
-        JSON object with the content of the HTML request response
+    """
+
+    Args:
+        collection_name: str
+            Name of the collection
+        json_doc: JSON object
+            Document
+        etag: long
+            Hash_function tag for concurrency management
+        database_id:
+            Database id
+
+    Returns:
+        _: int
+            Result code 0-success 1-failure
+        _: str
+            Result message
+        _: JSON Object
+            Extra result content in a JSON format
+
     """
     response = requests.post(_url("{}".format(collection_name)), headers=utils.get_headers(), data=json_doc)
     print(response.status_code)
@@ -205,27 +217,26 @@ def post_document(collection_name, json_doc):
         return 1, response.status_code, json.loads(response.content)
 
 def put_document(collection_name, json_doc, etag, database_id):
-    """ Put document into MongoDB database
-    ----------------------------------------
-    Parameters
-    ----------
-    collection_name : str
-        Name of the collection
-    json_doc : JSON object
-        Document JSON object
-    etag:
-        Hash function tag for database operations concurreny
-    database_id
-        Object _id of the existing document to patch
+    """
 
-    Returns
-    -------
-    _ : int
-        Internal status code -> 0: success | 1: failure
-    _ : int
-        HTML requests REST status code
-    _ : JSON Object
-        JSON object with the content of the HTML request response
+    Args:
+        collection_name: str
+            Name of the collection
+        json_doc: JSON object
+            Document
+        etag: long
+            Hash_function tag for concurrency management
+        database_id:
+            Database id
+
+    Returns:
+        _: int
+            Result code 0-success 1-failure
+        _: str
+            Result message
+        _: JSON Object
+            Extra result content in a JSON format
+
     """
     headers = utils.get_headers()
     headers['If-Match'] = etag

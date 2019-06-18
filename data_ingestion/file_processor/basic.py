@@ -82,18 +82,20 @@ class Basic():
                 self.df = self.df.withColumn("converted_timestamp_ms", functions.unix_timestamp(functions.col(self.ts_field), format=self.time_format) * 1000)
                 self.ts_field = "converted_timestamp_ms"
             #self.df = self.df.withColumn('minute', functions.from_unixtime(functions.col('ts in ms'), "yyyy-MM-dd'T'HH:mm:ss.SSS").cast(types.DateType()))
-            minmax = self.df.agg(functions.min(self.ts_field).alias('min'), functions.max(self.ts_field).alias('max')).collect()
+            minmax = self.df.agg(functions.min(self._select_column(self.ts_field)).alias('min'), functions.max(self._select_column(self.ts_field)).alias('max')).collect()
+            print(minmax)
             interval = get_functional_interval(self.time_interval, self.time_units)
-            initial = minmax[0].min
+            initial = int(minmax[0].min)
             return_list = []
             iteration = 1
 
-            while initial < minmax[0].max:
+            while initial < int(minmax[0].max):
                 print("{} --- {} interval output".format(initial, initial + interval))
-                filtered_df = self.df.filter(functions.col(self.ts_field).between(initial, initial + interval - 1))
+                filtered_df = self.df.filter(self._select_column(self.ts_field).between(initial, initial + interval - 1))
                 initial = initial + interval
                 return_list = return_list + self._run_queries(filtered_df, iteration)
                 iteration = iteration + 1
+
             self.df.unpersist()
 
             return return_list
@@ -137,3 +139,18 @@ class Basic():
         self.ts_field = field
         self.time_units = interval[-1]
         self.time_interval = int(interval[:-1])
+
+    def _select_att_array(self, attr_list, alias_list):
+        select_array = []
+        for index, attribute in enumerate(attr_list):
+            select_array.append(self._select_column(attribute).alias(alias_list[index]))
+        return select_array
+
+    def _select_column(self, column):
+        if '.' in column:
+            struct_field = column.split('.')[1]
+            if '[' in struct_field:
+                index_number = int(struct_field[1:-1])
+                return functions.col(column.split('.')[0]).getItem(index_number)
+
+        return functions.col(column)

@@ -7,36 +7,44 @@
         "timestamp_format": "ms"
     },
     "data": {
-        "source_name": {
+        "source_name": [
+          {
             "a": "feature",
             "value": "dshs#input",
             "description": "Source name"
-        },
-
-        "source_identifier": {
+          }
+        ],
+        "source_identifier": [
+          {
             "a": "feature",
             "value": "dshs#input",
             "description": "Source unique identifier"
-        },
-
-        "Games": {
+          }
+        ],
+        "Games": [
+          {
             "a": "collection",
             "schema_identifier": "dshs#mapping_1"
-        },
-
-        "Participants": {
+          }
+        ],
+        "Participants": [
+          {
             "a": "collection",
             "schema_identifier": "sensor id",
             "shirt_number": "number",
             "full_name": "full name",
             "team_id": "group id"
-        },
-        "Teams": {
+          }
+        ],
+        "Teams": [
+          {
             "a": "collection",
             "schema_identifier": "group id",
             "name": "group name"
-        },
-        "GameSections": {
+          }
+        ],
+        "GameSections": [
+          {
             "a": "collection",
             "schema_identifier": "dshs#mapping_1",
             "game_id": "dshs#mapping_1",
@@ -61,6 +69,7 @@
                 "interval": "5m",
                 "ts_field": "ts in ms"
             }
-        }
+          }
+        ]
     }
 }

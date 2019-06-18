@@ -25,7 +25,7 @@ class="form-horizontal" method="post" enctype="multipart/form-data" role="form">
             <h3 class="card-title" style="margin-left: 10px">Data source schema</h3>
             {%  for m in metadata %}
             <div class="row" style="margin-left: 10%">
-                |<span style="width: {{(m['level']*5)**2}}px"></span>|---->
+                {% for r in range(m['level']) %} <span style="width: {{(m['level']*5)**2}}px"></span> {% endfor %}|--
                  {{ m['name'] }} : {{ m['type'] }}
             </div>
             {% endfor %}
