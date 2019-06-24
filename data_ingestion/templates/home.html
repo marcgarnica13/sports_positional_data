@@ -1,4 +1,4 @@
-{% extends "base.html"%}
+{% extends "spark_monitoring.html"%}
 {% block content %}
 <!-- Complete card -->
 <form id="form" action="/" method="post" enctype="multipart/form-data" role="form">
@@ -82,7 +82,7 @@
       </div>
     </div>
   <div class="row" style="margin-top: 1em;">
-      <button id=upload_data type="submit" name='button' form="form" value="data_import" class="btn btn-default btn-lg btn-block">Upload data</button>
+      <button id=upload_data type="submit" name='button' form="form" value="data_import" class="btn btn-primary btn-lg btn-block">Upload data</button>
   </div>
 </form>
 {% endblock %}

@@ -122,7 +122,7 @@ def import_new_document(collection_name, new_doc, document_key, overwrite=False)
             response_content
     else:
         code, response_code, response_content = post_document(collection_name, json.dumps(new_doc))
-        if response_code != 0:
+        if code != 0:
             return 4, "Post operation on {} failed".format(collection_name), response_content
 
     lg.debug("Import done in {} seconds".format(time.time() - start))

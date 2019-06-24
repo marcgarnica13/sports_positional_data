@@ -1,7 +1,8 @@
 from pyspark import SparkConf
+import time
 
 # Statement for enabling the development environment
-DEBUG=True
+DEBUG=False
 # Define the application directory
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -17,9 +18,16 @@ THREADS_PER_PAGE = 2
 
 SPARK_CONF = SparkConf()
 SPARK_CONF.set('spark.logConf', 'true')
+SPARK_CONF.set("spark.scheduler.mode", "FAIR")
 SPARK_CONF.set(
     'spark.jars.packages',
     'com.databricks:spark-xml_2.11:0.5.0')
+SPARK_CONF.set(
+    'spark.ui.xXssProtection',
+    '0'
+)
+
+SPARK_CONF.setAppName('repo_ingestion')
 
 # Enable protection agains *Cross-site Request Forgery (CSRF)*
 CSRF_ENABLED = True

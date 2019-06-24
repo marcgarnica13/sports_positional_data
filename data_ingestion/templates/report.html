@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Complete card -->
+<div class="card">
+    <h2 class="card-title" style="margin-left: 10px">Import report </h2>
+    {% for collection, report in report.items() %}
+    <div class="card-body">
+        <h3 class="card-title" style="margin-left: 10px">{{ collection }}</h3>
+        <ul class="list-group">
+            {% for m in report %}
+            <li class="list-group-item">
+                <div class="row form-group" style="margin: 10px">
+                    <div ><label class="control-label {{ m['type'] }}">{{m['message']}}</label></div>
+                    {% if m['type'] == 'inputText' %}
+                    <div class="" style="width: 100%"><input class="controls form-control" style="margin-bottom: 10px;" id="{{ m['id'] }}" name="{{ m['name'] }}" type="text"></div>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

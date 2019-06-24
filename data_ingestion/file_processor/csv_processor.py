@@ -1,6 +1,7 @@
 import logging as lg
 import time
 import json
+import os
 
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -19,6 +20,8 @@ class CSVProcessor(Basic):
         super().__init__()
         self.spark = SparkSession.builder.config(conf=config.SPARK_CONF).getOrCreate()
         self.spark.sparkContext.setLogLevel("OFF")
+        job_text = "{}#Reading data file#Dataframe creation and inferring schema".format(os.path.basename(file_path))
+        self.set_job_description(job_text)
         self.df = self.spark.read.csv(
             file_path,
             header=header,

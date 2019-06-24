@@ -2,7 +2,6 @@ import logging as lg
 import os
 import json
 import time
-import pprint
 
 from jsonmerge import merge as jsmerge
 from pathlib import Path
@@ -59,13 +58,15 @@ class DataImport():
         self.data_file_name = file_name
         lg.info("New data import: {0}-{1}-{2}-{3}".format(mapping, name, message, file_name))
 
+    def get_application_id(self):
+        return self.fp.spark.sparkContext.applicationId
+
     def validate(self):
         lg.info("New import validation process")
         code, response_code, response_content = mongo_api.get_document(collection_name='mappings', document_key=self.mapping_id, database_attributes=False)
         if code != 0:
             return False, "Error loading mapping", ""
         else:
-            print(json.dumps(response_content))
             self.m = response_content
 
         ds_validate = self._validate_datasource()
@@ -73,11 +74,15 @@ class DataImport():
         self._store_validation_results()
         return (ds_validate and db_validate), self.validation_messages, self.fp.metadata
 
+    def load_results(self):
+        self._load_import_files()
+        return True, self.validation_messages, self.file_metadata
+
     def run(self):
         self._load_import_files()
         utils.delete_temp_folder()
         lg.info("Starting new import.")
-        list_of_response = ""
+        list_of_responses = {}
 
         for collection, json_doc_set in self.IndividualImport.items():
             for doc in json_doc_set:
@@ -87,14 +92,28 @@ class DataImport():
                                          json_doc=json.dumps(doc),
                                          etag=self.MetaImport[collection][doc['schema_identifier']]['etag'],
                                          database_id=self.MetaImport[collection][doc['schema_identifier']]['object_id'])
-                list_of_response += str(response_code)
+                if code == 0:
+                    list_of_responses.setdefault(collection, []).append(
+                        create_new_message('text', doc['schema_identifier'], '', 'Document {} : Update executed correctly'.format(doc['schema_identifier'])))
+                else:
+                    list_of_responses.setdefault(collection, []).append(
+                        create_new_message('text', doc['schema_identifier'], '', 'Error while updating document {}: {} -> {}'.format(doc['schema_identifier'], response_code, response_content))
+                    )
+
 
         for collection, json_doc_set in self.BulkImport.items():
             lg.debug('Creating new document in {} collection'.format(collection))
             code, response_code, response_content = mongo_api.post_document(collection_name=collection, json_doc=json.dumps(json_doc_set))
-            list_of_response += str(response_code)
+            if code == 0:
+                list_of_responses.setdefault(collection, []).append(
+                    create_new_message('text', '', '', 'Creating {} new documents successfully'.format(len(json_doc_set))))
+            else:
+                list_of_responses.setdefault(collection, []).append(
+                    create_new_message('text', '', '',
+                                       'Error while creating {} new documents: {} -> {}'.format(len(json_doc_set), response_code, response_content))
+                )
 
-        return list_of_response
+        return list_of_responses
 
     def _validate_datasource(self):
         lg.info("Validation process: Data source")
@@ -122,6 +141,7 @@ class DataImport():
             #self.fileProcessor = utils.new_file_processor(self.m['file']['format'])
             self.fp = new_file_processor(self.m['file'], self.data_file_name)
 
+
             for data_key, data_value in self.m['data'].items():
                 for data_definition in data_value:
                     if data_definition['a'] == 'feature':
@@ -129,12 +149,10 @@ class DataImport():
                     elif data_definition['a'] == 'collection':
                         start = time.time()
                         self.DataFromSource.setdefault(data_key, []).extend(self._process_collection(data_key, data_definition))
-                        print(self.DataFromSource)
                         lg.debug("Data source processed for collection {} in {} seconds".format(data_key, time.time() - start))
 
             self.validation_messages['DS'].append(
                 create_new_message('text', '', '', 'Data source validated in {} seconds'.format(time.time() - start)))
-
 
 
             return True
@@ -164,7 +182,6 @@ class DataImport():
         headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
         for doc in doc_set:
-            print(doc)
             json_doc = json.loads(doc)
             json_doc['schema_identifier'] = str(json_doc['schema_identifier'])
             code, response_code, json_content = mongo_api.get_document(collection_name=collection, document_key=json_doc['schema_identifier'])
@@ -248,16 +265,22 @@ class DataImport():
                                     self.fp.append_array_columns(array_column=field, array_column_alias=utils.urlify(field), nested=nested)
 
             if not nested:
+                job_text = "{}#{}#Exploding data source and extracting data".format(self.data_file_name, collection_name)
+                self.fp.set_job_description(job_text)
                 return self.fp.process()
 
     def _store_validation_results(self):
         temp_file_name = Path(self.data_file_name).stem
+        utils.dump_pickle_object(self.validation_messages, temp_file_name + "_validation_methods")
+        utils.dump_pickle_object(self.fp.metadata, temp_file_name + "_structure")
         utils.dump_pickle_object(self.BulkImport, temp_file_name + "_bulk")
         utils.dump_pickle_object(self.IndividualImport, temp_file_name + "_individual")
         utils.dump_pickle_object(self.MetaImport, temp_file_name + "_meta")
 
     def _load_import_files(self):
         temp_file_name = Path(self.data_file_name).stem
+        self.validation_messages = utils.load_pickle_object(temp_file_name + "_validation_methods")
+        self.file_metadata = utils.load_pickle_object(temp_file_name + "_structure")
         self.BulkImport = utils.load_pickle_object(temp_file_name + "_bulk")
         self.IndividualImport = utils.load_pickle_object(temp_file_name + "_individual")
         self.MetaImport = utils.load_pickle_object(temp_file_name + "_meta")

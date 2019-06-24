@@ -9,6 +9,7 @@ from flask import \
     url_for,\
     redirect,\
     Blueprint,\
+    session,\
     jsonify
 
 from data_ingestion import utils, mongo_api, config
@@ -19,7 +20,9 @@ mod_home = Blueprint('home', __name__, url_prefix='/')
 
 @mod_home.route('/', methods = ['GET', 'POST'])
 def home():
-    utils.delete_temp_folder()
+    #utils.delete_temp_folder()
+    if 'application_id' in session:
+        session.pop('application_id')
 
     form = UploadForm(CombinedMultiDict((request.files, request.form)))
     print(request.form)
@@ -29,7 +32,6 @@ def home():
         case = request.form['button']
         if case == 'data_import':
             lg.debug("New data import")
-            print(form.selected_mapping.data)
             if form.validate_on_submit():
                 data_file_name = secure_filename(form.data_file.data.filename)
                 utils.save_temp_file(request.files['data_file'])
@@ -68,7 +70,11 @@ def validate():
                            request.args['full_name'],
                            request.args['message'],
                            request.args['data_file_name'])
-    correct, messages, metadata = newImport.validate()
+    if 'application_id' in session:
+        correct, messages, metadata = newImport.load_results()
+    else:
+        session['application_id'] = request.args['data_file_name']
+        correct, messages, metadata = newImport.validate()
     if not correct:
         return render_template("error.html", error=messages)
     else:
@@ -76,14 +82,13 @@ def validate():
 
 @mod_home.route('/data_uploader', methods = ['POST'])
 def data_upload():
-    print('data uploader')
     newImport = DataImport(request.args['selected_mapping'],
                            request.args['full_name'],
                            request.args['message'],
                            request.args['data_file_name']
                            )
     report = newImport.run()
-    return render_template("error.html", error=report)
+    return render_template("report.html", report=report)
 
 @mod_home.route('/mapping_uploader', methods = ['POST'])
 def mapping_upload():

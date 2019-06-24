@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8">
     <title>Positional Data Repository</title>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"><link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/spark_monitoring.js')}}"></script>
+    <script src="https://unpkg.com/moment"></script>
     <div id="repo_header" class="row card person-card">
               <div class="card-body">
                   <!-- School logo image -->
@@ -17,7 +19,9 @@
           </div>
   </head>
 <body>
-    <div id="loading"></div>
+    <div id="loading_div">
+        {% block spark_monitoring %} {% endblock %}
+    </div>
     <div id="content" class="container" style="margin-top: 1em;">
         {% block content %} {% endblock %}
     </div>
@@ -30,9 +34,10 @@
         });
 
         $( "#upload_data" ).click(function() {
-            $("#loading").show();
+            $("#loading_div").show();
             $("#content").hide();
             $("#repo_header").hide()
+            start_monitoring()
         });
 
         $(document).keypress(

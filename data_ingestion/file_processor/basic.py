@@ -1,4 +1,5 @@
 import logging as lg
+import math
 
 from pyspark.sql import functions
 
@@ -14,6 +15,7 @@ class Basic():
 
     def __init__(self):
         self.reset_cols()
+
         print("Basic")
 
     def reset_cols(self):
@@ -82,15 +84,20 @@ class Basic():
                 self.df = self.df.withColumn("converted_timestamp_ms", functions.unix_timestamp(functions.col(self.ts_field), format=self.time_format) * 1000)
                 self.ts_field = "converted_timestamp_ms"
             #self.df = self.df.withColumn('minute', functions.from_unixtime(functions.col('ts in ms'), "yyyy-MM-dd'T'HH:mm:ss.SSS").cast(types.DateType()))
+            job_text = "{}#Partitioning data source".format(self.job)
+            self.spark.sparkContext.setJobGroup(job_text, job_text)
             minmax = self.df.agg(functions.min(self._select_column(self.ts_field)).alias('min'), functions.max(self._select_column(self.ts_field)).alias('max')).collect()
             print(minmax)
             interval = get_functional_interval(self.time_interval, self.time_units)
             initial = int(minmax[0].min)
             return_list = []
             iteration = 1
+            total_iterations = math.ceil((int(minmax[0].max) - initial) / interval)
 
             while initial < int(minmax[0].max):
                 print("{} --- {} interval output".format(initial, initial + interval))
+                job_text = "{}#Extraction of data from partition {} out of {}".format(self.job, iteration, total_iterations)
+                self.spark.sparkContext.setJobGroup(job_text, job_text)
                 filtered_df = self.df.filter(self._select_column(self.ts_field).between(initial, initial + interval - 1))
                 initial = initial + interval
                 return_list = return_list + self._run_queries(filtered_df, iteration)
@@ -154,3 +161,8 @@ class Basic():
                 return functions.col(column.split('.')[0]).getItem(index_number)
 
         return functions.col(column)
+
+    def set_job_description(self, job_description):
+        self.job = job_description
+        self.spark.sparkContext.setJobGroup(job_description, job_description)
+
