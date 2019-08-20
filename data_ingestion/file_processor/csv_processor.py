@@ -30,6 +30,7 @@ class CSVProcessor(Basic):
         self.time_format = time_format
         self.metadata = utils.process_schema(json.loads(self.df.schema.json()))
         lg.debug("CSV Metadata: {}".format(self.metadata))
+        self.df.printSchema()
 
 
     def _run_queries(self, dataframe, iteration=0):

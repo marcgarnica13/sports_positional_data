@@ -1,0 +1,101 @@
+{
+  "_id": <ObjectId>,
+  "schema_identifier": "game1",
+  "home_team": "BAR",
+  "away_team": "RMD"
+}
+
+{
+  "_id": <ObjectId>,
+  "schema_identifier": "BAR"
+}
+
+{
+  "_id": <ObjectId>,
+  "schema_identifier": "RMD"
+}
+
+{
+  "_id": <ObjectId>,
+  "schema_identifier": "1111",
+  "team": "BAR",
+  "name": "player_name",
+  "position": "center"
+}
+
+{
+  "_id": <ObjectId>,
+  "schema_identifier": "BALL"
+}
+
+
+{
+  "_id": <ObjectId>,
+  "schema_identifier": "first_half",
+  "game": "game1"
+}
+
+{
+    "_id": <ObjectId>,
+    "schema_identifier": "Frame1",
+    "timestamp": "timestamp1",
+    "section": "first_half",
+    "game": "game1",
+    "participants": [
+        {
+          "participant_id": "1111",
+          "coord_x" : "45",
+          "coord_y" : "38",
+          "coord_z" : "0"
+        },
+        {
+          "participant_id": "BALL",
+          "coord_x" : "45",
+          "coord_y" : "38",
+          "coord_z" : "3"
+        }
+    ],
+}
+
+{
+    "_id": <ObjectId>,
+    "schema_identifier": "Frame1",
+    "timestamp": "timestamp1",
+    "section": "first_half",
+    "game": "game1",
+    "participants": [
+        ["1111","45","38","0"],
+        ["BALL", "45","38","3"]
+    ],
+    "participants_cols": [
+      "participant_id",
+      "coord_x",
+      "coord_y",
+      "coord_z"
+    ],
+}
+
+
+{
+  "_id": <ObjectId>,
+  "schema_identifier": "first_half",
+  "game": "game1",
+  "moments": [
+    {
+      "n_id": "Frame1",
+      "timestamp": "timestamp1",
+      "section": "first_half",
+      "game": "game1",
+      "participants": [],
+      "participants_cols": [],
+    },
+    {
+      "n_id": "Frame2",
+      "timestamp": "timestamp2",
+      "section": "first_half",
+      "game": "game1",
+      "participants": [],
+      "participants_cols": [],
+    },
+  ]
+}

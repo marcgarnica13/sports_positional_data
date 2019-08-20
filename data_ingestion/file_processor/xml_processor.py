@@ -27,3 +27,4 @@ class XMLProcessor(NestedProcessor):
         lg.debug(self.df.schema.json())
         self.metadata = utils.process_schema(json.loads(self.df.schema.json()))
         lg.debug(json.dumps(self.metadata))
+        self.df.printSchema()

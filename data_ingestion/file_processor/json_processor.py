@@ -25,6 +25,7 @@ class JSONProcessor(NestedProcessor):
         self.df = self.spark.read.json(file_path).cache()
         lg.debug(self.df.schema.json())
         self.metadata = utils.process_schema(json.loads(self.df.schema.json()))
+        self.df.printSchema()
 
         lg.debug(json.dumps(self.metadata))
         lg.debug("JSON init function executed in {} seconds".format(time.time() - start))

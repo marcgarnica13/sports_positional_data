@@ -74,7 +74,6 @@ class NestedProcessor(Basic):
         return alias, split[-1]
 
     def _run_queries(self, dataframe, iteration=0):
-        dataframe.printSchema()
         c, ca, nested_c, nested_ca, l, la, nested_l, nested_la, a, aa, nested_array_name, nested_a, nested_aa, nested_nested_array_name = self.copy_processor_arrays()
         if len(c) + len(l) + len(nested_c) + len(nested_l) != 0:
             lg.debug(

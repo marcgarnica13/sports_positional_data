@@ -7,20 +7,6 @@
         "timestamp_format": "ms"
     },
     "data": {
-        "source_name": [
-          {
-            "a": "feature",
-            "value": "dshs#input",
-            "description": "Source name"
-          }
-        ],
-        "source_identifier": [
-          {
-            "a": "feature",
-            "value": "dshs#input",
-            "description": "Source unique identifier"
-          }
-        ],
         "Games": [
           {
             "a": "collection",
@@ -60,7 +46,8 @@
                     "coord_y": "y in m",
                     "coord_z": "z in m",
                     "additional_fields": [
-                        "speed in m/s", "direction of movement in deg", "acceleration in m/s2", "total distance in m",
+                        "speed in m/s", "direction of movement in deg",
+                        "acceleration in m/s2", "total distance in m",
                         "metabolic power in W/kg", "acceleration load"
                     ]
                 }
