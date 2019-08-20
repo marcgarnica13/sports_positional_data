@@ -1,1 +1,7 @@
-# sporst_positional_data
+# Integrated repository for Positional Data in Sports
+
+Positional data is a very simple data source containing the position of each tracked object at a certain frequency. The usage of this data source can provide crucial insights into the formation of collaborative teams and their dynamic behavior. Similarly to many other sectors, positional data is collected and provided by so many different organizations such as national leagues or software companies. The high number of providers is making the analytics teams spending most of the time dealing with the different data formats and reading procedures rather than on the statistic pipelines, result discussions, and applications.
+
+We present a simple tool that aims to integrate all the different positional data sources by defining a common and integrated data model. The tool makes use of a very light language to define the structure of each data source and map it to the desired data model. The data source and its definition are ingested by the system to perform the appropriate transformations and load the data in the common repository. This tool tackles the specific challenge in sports positional data sources but aims to be easily replicated to any other sector with similar requirements.
+
+The tool presented provides a single point of access for data sharing and querying. The usage of the tool will speed up the analysis with positional data by serving it in an agreed and standard format regardless of the data source. In the long term, this tool aims to be the base layer of a standard analytic stack for positional data studies providing data, software, and analysis as a service.
