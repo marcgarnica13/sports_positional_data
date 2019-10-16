@@ -30,8 +30,9 @@ app.jinja_env.trim_blocks = True
 # HTTP error handling for non-existing URL or server errors
 @app.errorhandler(exc.HTTPException)
 def error_handler(error):
-    print(error)
     return render_template('error.html', error=error)
 
 from data_ingestion.views import mod_home
+from data_ingestion.api import mod_api
 app.register_blueprint(mod_home)
+app.register_blueprint(mod_api)

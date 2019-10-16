@@ -1,7 +1,9 @@
 import os
 from data_ingestion.file_processor import xml_processor, csv_processor
 
-processor = csv_processor.CSVProcessor(file_path='large_kinexon.csv', header='True', delimiter=';')
+processor = xml_processor.XMLProcessor(
+    file_path='/home/marc/Development/sports_analytics/game_changer/real_sociedad_kickoff/data_examples/tournaments.xml',
+    rowtag="data",
+    value_tag="_xml_value",
+    time_format="ms")
 
-processor.set_processor_arrays(['1'],['1'],['1'],['1'],['1'],['1'])
-processor.process()

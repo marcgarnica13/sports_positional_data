@@ -5,6 +5,8 @@ import json
 import pickle
 import logging as lg
 
+import collections
+
 from werkzeug.utils import secure_filename
 
 from data_ingestion import config
@@ -92,7 +94,6 @@ def get_default_mapping():
 
 def process_schema(schema_json, level=0):
     json_fields = []
-    print(schema_json)
     if schema_json['type'] == 'struct':
         for field in schema_json['fields']:
             new_field = {}

@@ -25,7 +25,6 @@ def home():
         session.pop('application_id')
 
     form = UploadForm(CombinedMultiDict((request.files, request.form)))
-    print(request.form)
     form.selected_mapping.choices = [(m['_id'], m['name']) for m in mongo_api.get_collection(config.MAPPINGS_COLLECTION_NAME)]
 
     if request.method == 'POST':
@@ -56,7 +55,7 @@ def home():
             lg.debug("Processing requests to download mapping")
             selected_id = form.selected_mapping.data
             if selected_id == '-1':
-                return jsonify(utils.get_default_mapping()), 200
+                return jsonify(mongo_api.get_merged_collection(config.MAPPINGS_COLLECTION_NAME, utils.get_default_mapping())), 200
             code, response_code, response = mongo_api.get_document(config.MAPPINGS_COLLECTION_NAME, document_key=selected_id, database_attributes=False)
             if code == 0:
                 return jsonify(response),200

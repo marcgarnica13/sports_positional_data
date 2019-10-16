@@ -1,10 +1,9 @@
-"""
-
-"""
 import requests
 import json
 import time
 import logging as lg
+
+from deepmerge import always_merger
 
 from data_ingestion import config, utils
 
@@ -56,6 +55,14 @@ def get_collection(collection_name, all_collection=True):
         else:
             pass
     return collection_list
+
+def get_merged_collection(collection_name, initial_template={}):
+    collection_documents = get_collection(collection_name, False)
+    print(initial_template)
+    for d in collection_documents:
+        filtered_dict = {key: val for key, val in d.items() if key not in get_mongo_api_attributes()}
+        always_merger.merge(initial_template, filtered_dict)
+    return initial_template
 
 def get_mongo_api_attributes():
     """
@@ -137,7 +144,7 @@ def get_document(collection_name, document_key, database_attributes=True):
         document_key: str
             Domain primary key attribute of the document
         database_attributes: boolean(True)
-            Include database specific attribute in the retrieving document
+            Include database specific attributes in the retrieving document
 
     Returns:
         _: int
@@ -179,7 +186,6 @@ def patch_document(collection_name, json_doc, etag, database_id):
     """
     headers = utils.get_headers()
     headers['If-Match'] = etag
-    print(headers)
     response = requests.patch(_url("{}/{}".format(collection_name, database_id)), headers=headers, data=json_doc)
 
     if response.status_code == 200:
@@ -210,7 +216,6 @@ def post_document(collection_name, json_doc):
 
     """
     response = requests.post(_url("{}".format(collection_name)), headers=utils.get_headers(), data=json_doc)
-    print(response.status_code)
     if response.status_code == 201:
         return 0, response.status_code, json.loads(response.content)
     else:
@@ -240,7 +245,6 @@ def put_document(collection_name, json_doc, etag, database_id):
     """
     headers = utils.get_headers()
     headers['If-Match'] = etag
-    print(headers)
     response = requests.put(_url("{}/{}".format(collection_name, database_id)), headers=headers, data=json_doc)
 
     if response.status_code == 200:
