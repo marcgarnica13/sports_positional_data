@@ -5,7 +5,7 @@ import logging as lg
 
 from deepmerge import always_merger
 
-from data_ingestion import config, utils
+import config, utils
 
 def _url(path):
     """

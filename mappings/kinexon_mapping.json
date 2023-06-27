@@ -53,7 +53,7 @@
                 }
             },
             "partition" : {
-                "interval": "5m",
+                "interval": "15s",
                 "ts_field": "ts in ms"
             }
           }

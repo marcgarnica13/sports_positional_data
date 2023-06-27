@@ -6,8 +6,8 @@ import time
 from jsonmerge import merge as jsmerge
 from pathlib import Path
 
-from data_ingestion import config, utils, mongo_api
-from data_ingestion.file_processor import basic, csv_processor, json_processor, xml_processor
+import config, utils, mongo_api
+from file_processor import basic, csv_processor, json_processor, xml_processor
 
 def create_new_message(type, id, name, message):
     lg.debug("New message added {0} {1}".format(id, message))

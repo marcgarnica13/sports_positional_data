@@ -12,9 +12,9 @@ from flask import \
     session,\
     jsonify
 
-from data_ingestion import utils, mongo_api, config
-from data_ingestion.forms import UploadForm
-from data_ingestion.models import DataImport
+import utils, mongo_api, config
+from forms import UploadForm
+from models import DataImport
 
 mod_api = Blueprint('api', __name__, url_prefix='/api')
 

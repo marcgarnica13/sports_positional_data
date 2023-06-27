@@ -7,8 +7,8 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql import functions, types
 
-from data_ingestion import utils, config
-from data_ingestion.file_processor.basic import Basic
+import utils, config
+from file_processor.basic import Basic
 
 def epoch_to_datetime(x):
     return time.localtime(x)
@@ -26,7 +26,10 @@ class CSVProcessor(Basic):
             file_path,
             header=header,
             sep=delimiter,
-            inferSchema=True).cache()
+            inferSchema=True
+        ).orderBy(
+          functions.col('ts in ms')
+        ).cache()
         self.time_format = time_format
         self.metadata = utils.process_schema(json.loads(self.df.schema.json()))
         lg.debug("CSV Metadata: {}".format(self.metadata))

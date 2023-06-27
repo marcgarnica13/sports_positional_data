@@ -63,10 +63,10 @@ DOMAIN = {
     'Teams': teams
 }
 
-MONGO_HOST = 'localhost'
+MONGO_HOST = '0.0.0.0'
 MONGO_PORT = 27017
 
-MONGO_DBNAME = 'test_positional_data'
+MONGO_DBNAME = 'opta_test'
 
 RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']

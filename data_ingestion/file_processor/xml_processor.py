@@ -7,8 +7,8 @@ from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext, SparkSession
 from pyspark.sql import functions
 
-from data_ingestion.file_processor.nested_processor import NestedProcessor
-from data_ingestion import utils, config
+from file_processor.nested_processor import NestedProcessor
+import utils, config
 
 
 class XMLProcessor(NestedProcessor):

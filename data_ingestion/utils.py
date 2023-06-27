@@ -9,8 +9,8 @@ import collections
 
 from werkzeug.utils import secure_filename
 
-from data_ingestion import config
-from data_ingestion.tests import mappings
+import config
+from tests import mappings
 
 
 def check_folder(dir_path, create=True):
@@ -25,7 +25,6 @@ def check_folder(dir_path, create=True):
 
 def _url(path):
     return config.MONGODB_API_URL + path
-
 
 def get_mappings_collection():
     mappings_list = [('0', 'firstMapping'), ('1', 'secondMapping')]

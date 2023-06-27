@@ -34,6 +34,6 @@ CSRF_ENABLED = True
 CSRF_SESSION_KEY=os.urandom(32)
 SECRET_KEY=os.urandom(32)
 
-MONGODB_API_URL= 'http://localhost:5000/'
+MONGODB_API_URL= 'http://0.0.0.0:5000/'
 MAPPINGS_COLLECTION_NAME = 'mappings'
 MAPPINGS_KEY = 'name'
